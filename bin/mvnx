@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const mvnx = require('../src/index.js');
 
 (async function main() {
