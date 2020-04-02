@@ -29,7 +29,9 @@
   "devDependencies": {
     "bili": "4.8.1",
     "husky": "4.2.3",
-    "mvn-artifact-download": "4.1.0",
+    "mvn-artifact-filename": "4.1.0",
+    "mvn-artifact-name-parser": "4.1.0",
+    "mvn-artifact-url": "4.1.0",
     "standard": "14.3.3",
     "yargs": "15.3.1"
   }
