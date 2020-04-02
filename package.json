@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/mvnx/mvnx#readme",
   "devDependencies": {
-    "bili": "4.8.1"
+    "bili": "4.8.1",
+    "mvn-artifact-download": "4.1.0",
+    "yargs": "15.3.1"
   }
 }
