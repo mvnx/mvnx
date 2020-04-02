@@ -1,0 +1,19 @@
+{
+  "name": "mvnx",
+  "version": "1.0.0",
+  "description": "Execute JARs from maven repositories with no strings attached.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mvnx/mvnx.git"
+  },
+  "author": "Attila Bagossy",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/mvnx/mvnx/issues"
+  },
+  "homepage": "https://github.com/mvnx/mvnx#readme"
+}
