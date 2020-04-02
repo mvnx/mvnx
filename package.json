@@ -7,7 +7,14 @@
     "mvnx": "bin/mvnx"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "standard",
+    "lint:fix": "standard --fix",
+    "test": "npm run lint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
   },
   "repository": {
     "type": "git",
@@ -21,7 +28,9 @@
   "homepage": "https://github.com/mvnx/mvnx#readme",
   "devDependencies": {
     "bili": "4.8.1",
+    "husky": "4.2.3",
     "mvn-artifact-download": "4.1.0",
+    "standard": "14.3.3",
     "yargs": "15.3.1"
   }
 }
