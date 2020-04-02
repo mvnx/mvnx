@@ -1,5 +1,7 @@
 const yargs = require('yargs')
 
+const maven = require('./lib/maven')
+
 function cli () {
   return yargs
     .command('$0 <artifact> [arguments...]', '', yargs => {
@@ -33,6 +35,12 @@ function cli () {
             describe: '',
             type: 'string'
           },
+          'remote-repository': {
+            alias: 'r',
+            describe: '',
+            type: 'string',
+            default: 'https://repo1.maven.org/maven2/'
+          },
           quiet: {
             alias: 'q',
             describe: '',
@@ -44,8 +52,12 @@ function cli () {
     .argv
 }
 
-function run () {
-  console.log(cli())
+async function run () {
+  const argv = cli()
+
+  const artifact = maven.parseArtifactName(argv.artifact)
+
+  console.log(artifact)
 }
 
 module.exports = {

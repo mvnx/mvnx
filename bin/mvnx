@@ -1,3 +1,5 @@
-const mvnx = require('../src/index.js')
+const mvnx = require('../src/index.js');
 
-mvnx.run()
+(async function main() {
+    await mvnx.run()
+})()
