@@ -1,0 +1,3 @@
+const mvnx = require('../src/index.js')
+
+mvnx.run()
