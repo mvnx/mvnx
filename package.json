@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Execute JARs from maven repositories with no strings attached.",
   "main": "src/index.js",
+  "bin": {
+    "mvnx": "bin/mvnx"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
