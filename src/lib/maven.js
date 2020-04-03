@@ -7,10 +7,13 @@ const mvnArtifactFilename = require('mvn-artifact-filename').default
 const mvnArtifactNameParser = require('mvn-artifact-name-parser').default
 const mvnArtifactUrl = require('mvn-artifact-url').default
 
-const download = require('./download')
 const log = require('./log')
+const remote = require('./remote')
 
+const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
 const InvalidArtifactError = require('./error/InvalidArtifactError')
+
+const ARTIFACT_NAME_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9_:.-]*?[a-zA-Z0-9]$/g
 
 function getArtifactFilename (artifact) {
   return mvnArtifactFilename(artifact)
@@ -88,8 +91,9 @@ async function obtainArtifact (options) {
     }
   }
 
+  let remoteArtifactUrl = null
   if (options.useRemoteRepository) {
-    const remoteArtifactUrl = await getArtifactUrlInRemoteRepository(artifact, options.remoteRepository)
+    remoteArtifactUrl = await getArtifactUrlInRemoteRepository(artifact, options.remoteRepository)
 
     log(`Attempting to retrieve artifact from remote repository at\n  ${remoteArtifactUrl}`)
 
@@ -100,7 +104,7 @@ async function obtainArtifact (options) {
 
       downloadedArtifactPath = localArtifactPath
 
-      log(`Downloaded artifact will be saved to the local repository at\n ${localArtifactPath}`)
+      log(`Artifact will be saved to the local repository at\n ${localArtifactPath}`)
 
       temporary = false
     } else {
@@ -109,20 +113,24 @@ async function obtainArtifact (options) {
       temporary = true
     }
 
-    await download(remoteArtifactUrl, downloadedArtifactPath)
+    const foundInRemoteRepository = await remote.download(remoteArtifactUrl, downloadedArtifactPath)
 
-    log(`Retrieved artifact from remote repository\n  ${remoteArtifactUrl}`)
+    if (foundInRemoteRepository) {
+      log(`Retrieved artifact from remote repository\n  ${remoteArtifactUrl}`)
 
-    return {
-      path: downloadedArtifactPath,
-      temporary
+      return {
+        path: downloadedArtifactPath,
+        temporary
+      }
     }
   }
 
-  return null
+  throw new ArtifactNotFoundError({
+    artifactName: options.artifactName,
+    localArtifactPath,
+    remoteArtifactUrl
+  })
 }
-
-const ARTIFACT_NAME_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9_:.-]*?[a-zA-Z0-9]$/g
 
 function probablyAnArtifactName (str) {
   const regexMatches = str.match(ARTIFACT_NAME_REGEX)

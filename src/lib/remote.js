@@ -1,11 +1,13 @@
 const https = require('https')
 const fs = require('fs')
 
+const RemoteDownloadError = require('./error/RemoteDownloadError')
+
 async function download (url, destination) {
   return new Promise(function downloadPromise (resolve, reject) {
     const request = https.get(url, function responseHandler (response) {
       if (response.statusCode !== 200) {
-        reject(new Error(`Response status code was ${response.statusCode}`))
+        resolve(false)
 
         return
       }
@@ -15,20 +17,22 @@ async function download (url, destination) {
       response.pipe(output)
 
       output.on('finish', function downloadFinished () {
-        output.end(resolve)
+        output.end(() => resolve(true))
       })
 
       output.on('error', function downloadError (err) {
-        reject(err)
+        reject(new RemoteDownloadError({ url, destination }, err))
 
         fs.unlinkSync(destination)
       })
     })
 
     request.on('error', function requestError (err) {
-      reject(err)
+      reject(new RemoteDownloadError({ url, destination }, err))
     })
   })
 }
 
-module.exports = download
+module.exports = {
+  download
+}

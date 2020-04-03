@@ -10,7 +10,7 @@ class UnrecognizableArtifactError extends BaseMvnxError {
   }
 
   get solution () {
-    return 'Try artifact names of the form\n\n  <groupUd>:<artifactId>:<version>\n\nIf you believe, that the specified artifact name is correct, then please submit an issue to\n\n  https://github.com/mvnx/mvnx/issues'
+    return 'Try artifact names of the form\n\n  <groupId>:<artifactId>:<version>\n\nIf you\'re sure that the specified artifact name is correct, then please submit an issue to\n\n  https://github.com/mvnx/mvnx/issues'
   }
 }
 
