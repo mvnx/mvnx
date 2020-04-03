@@ -1,4 +1,4 @@
-name: Master Push and PR
+name: Build Master
 
 on:
   push:
