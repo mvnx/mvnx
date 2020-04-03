@@ -4,7 +4,7 @@
   "description": "Execute JARs from maven repositories with no strings attached.",
   "main": "src/index.js",
   "bin": {
-    "mvnx": "bin/mvnx"
+    "mvnx": "bin/mvnx.js"
   },
   "scripts": {
     "lint": "standard",
