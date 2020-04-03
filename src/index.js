@@ -1,6 +1,7 @@
 const yargs = require('yargs')
 
 const maven = require('./lib/maven')
+const fs = require('fs')
 
 function cli () {
   return yargs
@@ -78,12 +79,19 @@ async function run () {
 
   console.log(obtainOptions)
 
-  const obtainedArtifact = await maven.obtainArtifact(obtainOptions)
+  let obtainedArtifact
+  try {
+    const obtainedArtifact = await maven.obtainArtifact(obtainOptions)
 
-  console.log(obtainedArtifact)
+    console.log(obtainedArtifact)
 
-  if (!obtainedArtifact) {
-    console.log('F')
+    if (!obtainedArtifact) {
+      console.log('F')
+    }
+  } finally {
+    if (obtainedArtifact && obtainedArtifact.temporary) {
+      await fs.promises.unlink(obtainedArtifact.path)
+    }
   }
 }
 
