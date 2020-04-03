@@ -17772,43 +17772,43 @@ function cli (originalArgv) {
   }
 
   const yargsArgv = yargs_1$1(split ? split.cliArgv.slice(2) : originalArgv.slice(2))
-    .example('mvnx com.github.ricksbrown:cowsay:1.1.0 "Hello, World!"', 'Asd')
+    .usage('mvnx <groupid>:<artifactId>:<version>')
+    .example('mvnx com.github.ricksbrown:cowsay:1.1.0 "Hello, World!"', 'Say hello with a friendly cow!')
+    .epilogue('For more information, please visit https://github.com/mvnx/mvnx')
     .options({
       'ignore-local': {
-        describe: '',
+        describe: 'Ignore pre-existing artifacts in the local repository and attempt to download the requested artifact from the remote repository.',
         type: 'boolean',
         conflicts: ['only-local']
       },
       'only-local': {
-        describe: '',
+        describe: 'Attempt to find the requested artifact in the local repository only. Will not make requests to any remote repository.',
         type: 'boolean',
         conflicts: ['ignore-local']
       },
       'java-executable': {
         alias: 'j',
-        describe: '',
+        describe: 'Custom java executable path and options.',
         type: 'string',
         default: 'java'
       },
       'local-repository': {
         alias: 'l',
-        describe: '',
+        describe: 'Path to a local repository. Will attempt to use the default local repository ~/.m2 if missing',
         type: 'string'
       },
       'remote-repository': {
         alias: 'r',
-        describe: '',
+        describe: 'URL of a remote repository. Will use Maven Central by default.',
         type: 'string',
         default: 'https://repo1.maven.org/maven2/'
       },
       quiet: {
         alias: 'q',
-        describe: '',
+        describe: 'Suppress mvnx output (except for errors) and display output only from the JVM.',
         type: 'boolean'
       }
     })
-    .version()
-    .alias('version', 'v')
     .help()
     .alias('help', 'h')
     .strict(true)
