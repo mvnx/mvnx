@@ -30,6 +30,11 @@ mvnx is a JAR file executor with a catch: it obtains the JAR from local or remot
   * **No Configuration Needed.** There's no need for convoluted configuration, XML files, DSLs and the usual ceremony in the JVM world. You just specifiy the Maven coordinates along with the command line arguments and mvnx will take care of the rest.
   * **Local Repository Caching.**  Artifact resolution starts in your local repository for maximum speed and minimal network usage. Downloaded artifacts are also cached in the local repository.
 
+However, be aware of the following limitations (will be addressed in future versions):
+
+  * Fat JARs only. mvnx will not perform dependency resolution.
+  * Public repositories only. Maven repository login is currently not possible.
+
 ## Up and Running
 
 There's really not much to it:
@@ -54,7 +59,7 @@ There's really not much to it:
 mvnx [mvnx options] <artifact> [artifact arguments]
 ~~~~
 
-Available options:
+### mvnx options:
 
   * **--quiet** **-q**
     * Suppress mvnx output (except for errors) and display output only from the JVM. Very useful when piping the output of mvnx.
@@ -70,12 +75,22 @@ Available options:
     * Path to a local repository. Will attempt to use the default local repository ~/.m2 if missing.
   * **--remote-repository** **-r**
     * URL of a remote repository. Will use Maven Central by default.
+  * **--help** **--h**
+    * Display the help.
+      ~~~~
+      mvnx --help
+      ~~~~
 
-Display help:
+### artifact:
 
-~~~~
-mvnx --help
-~~~~
+  * Usual maven coordinates in the following format:
+    ~~~~
+    <groupId>:<artifactId>:<version>
+    ~~~~
+
+### artifact arguments
+
+  * The arguments you want to pass to the executed JAR.
 
 ## Contributing
 
