@@ -1,3 +1,4 @@
+const fs = require('fs')
 const { homedir } = require('os')
 const path = require('path')
 
@@ -32,11 +33,23 @@ function getLocalArtifactPath (artifact, predefinedLocalRepository) {
     localRepositoryPath,
     'repository',
     ...artifact.groupIdSegments,
+    artifact.artifactId,
     artifact.version,
     artifact.filename
   )
 
   return localArtifactPath
+}
+
+async function canReadLocalArtifact (path) {
+  try {
+    await fs.promises.access(path, fs.constants.R_OK)
+
+    return true
+  } catch (e) {
+    // Do not use exceptions for control flow, lol.
+    return false
+  }
 }
 
 async function obtainArtifact (options) {
@@ -46,8 +59,19 @@ async function obtainArtifact (options) {
   if (options.useLocalRepository) {
     localArtifactPath = getLocalArtifactPath(artifact, options.localRepository)
 
-    console.log(localArtifactPath)
+    if (await canReadLocalArtifact(localArtifactPath)) {
+      return {
+        path: localArtifactPath,
+        temporary: false
+      }
+    }
   }
+
+  if (options.useRemoteRepository) {
+
+  }
+
+  return null
 }
 
 module.exports = {

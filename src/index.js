@@ -78,7 +78,13 @@ async function run () {
 
   console.log(obtainOptions)
 
-  await maven.obtainArtifact(obtainOptions)
+  const obtainedArtifact = await maven.obtainArtifact(obtainOptions)
+
+  console.log(obtainedArtifact)
+
+  if (!obtainedArtifact) {
+    console.log('F')
+  }
 }
 
 module.exports = {
