@@ -1,7 +1,17 @@
 #!/usr/bin/env node
 
-const mvnx = require('../src/index.js');
+const mvnx = require('../src/index.js')
+const BaseMvnxError = require('../src/lib/error/BaseMvnxError');
 
 (async function main() {
-    await mvnx.run(process.argv)
+    try {
+        await mvnx.run(process.argv)
+    } catch (err) {
+        if (err instanceof BaseMvnxError) {
+            console.error();
+            console.error(err.toString());
+
+            process.exit(1);
+        }
+    }
 })()

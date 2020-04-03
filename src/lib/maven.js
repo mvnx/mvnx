@@ -10,17 +10,23 @@ const mvnArtifactUrl = require('mvn-artifact-url').default
 const download = require('./download')
 const log = require('./log')
 
+const InvalidArtifactError = require('./error/InvalidArtifactError')
+
 function getArtifactFilename (artifact) {
   return mvnArtifactFilename(artifact)
 }
 
 function parseArtifactName (artifactName) {
-  const artifact = mvnArtifactNameParser(artifactName)
+  try {
+    const artifact = mvnArtifactNameParser(artifactName)
 
-  artifact.groupIdSegments = artifact.groupId.split('.')
-  artifact.filename = getArtifactFilename(artifact)
+    artifact.groupIdSegments = artifact.groupId.split('.')
+    artifact.filename = getArtifactFilename(artifact)
 
-  return artifact
+    return artifact
+  } catch {
+    throw new InvalidArtifactError({ artifactName })
+  }
 }
 
 function getArtifactUrlInRemoteRepository (artifact, remoteRepository) {

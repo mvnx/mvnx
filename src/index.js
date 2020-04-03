@@ -6,11 +6,13 @@ const java = require('./lib/java')
 const log = require('./lib/log')
 const maven = require('./lib/maven')
 
+const UnrecognizableArtifactError = require('./lib/error/UnrecognizableArtifactError')
+
 function splitArgv (originalArgv) {
   const artifactArgIndex = originalArgv.findIndex(maven.probablyAnArtifactName)
 
   if (artifactArgIndex === -1) {
-    return null
+    throw new UnrecognizableArtifactError()
   }
 
   return {

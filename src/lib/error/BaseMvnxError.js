@@ -38,9 +38,7 @@ class BaseMvnxError extends Error {
   }
 
   get link () {
-    const config = require('../config').get('error')
-
-    return `${config.baseUrl}/${this.code}`
+    return `https://github.com/mvnx/mvnx/FIXME/${this.code}`
   }
 
   get details () {
