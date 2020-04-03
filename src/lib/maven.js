@@ -81,25 +81,43 @@ async function obtainArtifact (options) {
     const remoteArtifactUrl = await getArtifactUrlInRemoteRepository(artifact, options.remoteRepository)
 
     let downloadedArtifactPath
+    let temporary
     if (localArtifactPath) {
-      await mkdirp(localArtifactPath)
+      await mkdirp(path.dirname(localArtifactPath))
 
       downloadedArtifactPath = localArtifactPath
+
+      temporary = false
     } else {
       downloadedArtifactPath = artifact.filename
+
+      temporary = true
     }
 
     await download(remoteArtifactUrl, downloadedArtifactPath)
 
     return {
       path: downloadedArtifactPath,
-      temporary: true
+      temporary
     }
   }
 
   return null
 }
 
+const ARTIFACT_NAME_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9_:.-]*?[a-zA-Z0-9]$/g
+
+function probablyAnArtifactName (str) {
+  const regexMatches = str.match(ARTIFACT_NAME_REGEX)
+
+  if (!regexMatches) {
+    return false
+  }
+
+  return str.split(':').length >= 3
+}
+
 module.exports = {
-  obtainArtifact
+  obtainArtifact,
+  probablyAnArtifactName
 }

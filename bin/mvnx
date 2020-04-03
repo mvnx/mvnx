@@ -3,5 +3,5 @@
 const mvnx = require('../src/index.js');
 
 (async function main() {
-    await mvnx.run()
+    await mvnx.run(process.argv)
 })()

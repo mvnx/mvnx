@@ -6,6 +6,8 @@ async function download (url, destination) {
     const request = https.get(url, function responseHandler (response) {
       if (response.statusCode !== 200) {
         reject(new Error(`Response status code was ${response.statusCode}`))
+
+        return
       }
 
       const output = fs.createWriteStream(destination)
@@ -19,7 +21,7 @@ async function download (url, destination) {
       output.on('error', function downloadError (err) {
         reject(err)
 
-        fs.unlinkSync(output)
+        fs.unlinkSync(destination)
       })
     })
 
