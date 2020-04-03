@@ -10,8 +10,13 @@ const BaseMvnxError = require('../src/lib/error/BaseMvnxError');
         if (err instanceof BaseMvnxError) {
             console.error();
             console.error(err.toString());
+        } else {
+            console.error('An unexpected error occurred!')
+            console.error('Most likely, this is an issue with mvnx. Please submit an issue to\n\n  https://github.com/mvnx/mvnx/issues\n')
 
-            process.exit(1);
+            console.error(err)
         }
+
+        process.exit(1);
     }
 })()
