@@ -33,6 +33,7 @@
     "@rollup/plugin-commonjs": "11.0.2",
     "@rollup/plugin-node-resolve": "7.1.1",
     "husky": "4.2.3",
+    "mkdirp": "1.0.3",
     "mvn-artifact-filename": "4.1.0",
     "mvn-artifact-name-parser": "4.1.0",
     "mvn-artifact-url": "4.1.0",
