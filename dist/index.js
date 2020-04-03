@@ -17756,10 +17756,23 @@ function splitArgv (originalArgv) {
   }
 }
 
-function cli (originalArgv) {
-  const { cliArgv, artifactArgv } = splitArgv(originalArgv);
+function justDisplayTheHelp (originalArgv) {
+  if (originalArgv.length === 2) {
+    originalArgv.push('-h');
+    return true
+  }
 
-  const yargsArgv = yargs_1$1(cliArgv.slice(2))
+  return (originalArgv.length === 3) && (originalArgv[2] === '-h' || originalArgv[2] === '--help')
+}
+
+function cli (originalArgv) {
+  let split = null;
+  if (!justDisplayTheHelp(originalArgv)) {
+    split = splitArgv(originalArgv);
+  }
+
+  const yargsArgv = yargs_1$1(split ? split.cliArgv.slice(2) : originalArgv.slice(2))
+    .example('mvnx com.github.ricksbrown:cowsay:1.1.0 "Hello, World!"', 'Asd')
     .options({
       'ignore-local': {
         describe: '',
@@ -17794,7 +17807,6 @@ function cli (originalArgv) {
         type: 'boolean'
       }
     })
-    .command('$0 <artifact>')
     .version()
     .alias('version', 'v')
     .help()
@@ -17802,7 +17814,8 @@ function cli (originalArgv) {
     .strict(true)
     .argv;
 
-  yargsArgv.arguments = artifactArgv;
+  yargsArgv.arguments = split.artifactArgv;
+  yargsArgv.artifact = yargsArgv._[0];
 
   return yargsArgv
 }
