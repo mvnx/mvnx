@@ -1,7 +1,9 @@
+const fs = require('fs')
+
 const yargs = require('yargs')
 
-const fs = require('fs')
 const java = require('./lib/java')
+const log = require('./lib/log')
 const maven = require('./lib/maven')
 
 function splitArgv (originalArgv) {
@@ -97,7 +99,7 @@ function makeExecuteOptions (artifactPath, argv) {
 async function run (originalArgv) {
   const parsedArgv = cli(originalArgv)
 
-  console.log(parsedArgv)
+  log.configure({ quiet: parsedArgv.quiet })
 
   const obtainOptions = makeObtainOptionsFromArgv(parsedArgv)
 

@@ -8,6 +8,7 @@ const mvnArtifactNameParser = require('mvn-artifact-name-parser').default
 const mvnArtifactUrl = require('mvn-artifact-url').default
 
 const download = require('./download')
+const log = require('./log')
 
 function getArtifactFilename (artifact) {
   return mvnArtifactFilename(artifact)
@@ -67,7 +68,11 @@ async function obtainArtifact (options) {
   if (options.useLocalRepository) {
     localArtifactPath = getLocalArtifactPath(artifact, options.localRepository)
 
+    log(`Searcing for artifact in the local repository at\n  ${localArtifactPath}`)
+
     if (await canReadLocalArtifact(localArtifactPath)) {
+      log(`Artifact found in the local repository at\n  ${localArtifactPath}`)
+
       return {
         path: localArtifactPath,
         // But Mom, everything is temporary!
@@ -80,12 +85,16 @@ async function obtainArtifact (options) {
   if (options.useRemoteRepository) {
     const remoteArtifactUrl = await getArtifactUrlInRemoteRepository(artifact, options.remoteRepository)
 
+    log(`Attempting to retrieve artifact from remote repository at\n  ${remoteArtifactUrl}`)
+
     let downloadedArtifactPath
     let temporary
     if (localArtifactPath) {
       await mkdirp(path.dirname(localArtifactPath))
 
       downloadedArtifactPath = localArtifactPath
+
+      log(`Downloaded artifact will be saved to the local repository at\n ${localArtifactPath}`)
 
       temporary = false
     } else {
@@ -95,6 +104,8 @@ async function obtainArtifact (options) {
     }
 
     await download(remoteArtifactUrl, downloadedArtifactPath)
+
+    log(`Retrieved artifact from remote repository\n  ${remoteArtifactUrl}`)
 
     return {
       path: downloadedArtifactPath,
