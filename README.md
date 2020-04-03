@@ -24,3 +24,63 @@
     </a>
   </p>
 </div>
+
+mvnx is a JAR file executor with a catch: it obtains the JAR from local or remote Maven repositories.
+
+  * **No Configuration Needed.** There's no need for convoluted configuration, XML files, DSLs and the usual ceremony in the JVM world. You just specifiy the Maven coordinates along with the command line arguments and mvnx will take care of the rest.
+  * **Local Repository Caching.**  Artifact resolution starts in your local repository for maximum speed and minimal network usage. Downloaded artifacts are also cached in the local repository.
+
+## Up and Running
+
+There's really not much to it:
+
+  1. **Install mvnx.**
+     ~~~~
+     npm install -g mvnx
+     ~~~~
+
+  2. **Execute your favorite JAR.**
+     ~~~~
+     mvnx com.github.ricksbrown:cowsay:1.1.0 "Hello, World!"
+     ~~~~
+
+<div align="center">
+  <img src="docs/img/cowsay.png" alt="Running cowsay with mvnx.">
+</div>
+
+## Usage
+
+~~~~
+mvnx [mvnx options] <artifact> [artifact arguments]
+~~~~
+
+Available options:
+
+  * **--quiet** **-q**
+    * Suppress mvnx output (except for errors) and display output only from the JVM. Very useful when piping the output of mvnx.
+  * **--java-executable** **-j**
+    * Custom java executable path and options. By default, mvnx will use `java` and simply append `-jar somefilename`.
+  * **--ignore-local**
+    * Ignore pre-existing artifacts in the local repository and attempt to download the requested artifact from the remote repository. Downloaded artifacts will not be cached in the local repository.
+    * The inverse of **--only-local**.
+  * **--only-local**
+    * Attempt to find the requested artifact in the local repository only. Will not make requests to any remote repository.
+    * The inverse of **--ignore-local**.
+  * **--local-repository** **-l**
+    * Path to a local repository. Will attempt to use the default local repository ~/.m2 if missing.
+  * **--remote-repository** **-r**
+    * URL of a remote repository. Will use Maven Central by default.
+
+Display help:
+
+~~~~
+mvnx --help
+~~~~
+
+## Contributing
+
+Contributions, regardless of their type, are always welcome in mvnx! Take a look at the [Contributing Guide](CONTRIBUTING.md) for more information.
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE).
