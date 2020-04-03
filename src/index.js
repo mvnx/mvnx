@@ -1,8 +1,5 @@
-const { execSync } = require('child_process')
-
 const yargs = require('yargs')
 
-const download = require('./lib/download')
 const maven = require('./lib/maven')
 
 function cli () {
@@ -56,20 +53,32 @@ function cli () {
     .argv
 }
 
+function makeObtainOptionsFromArgv (argv) {
+  const options = {
+    artifactName: argv.artifact
+  }
+
+  if (!argv.ignoreLocal) {
+    options.useLocalRepository = true
+    options.localRepository = argv.localRepository
+  }
+
+  if (!argv.onlyLocal) {
+    options.useRemoteRepository = true
+    options.remoteRepository = argv.remoteRepository
+  }
+
+  return options
+}
+
 async function run () {
   const argv = cli()
 
-  const artifact = maven.parseArtifactName(argv.artifact)
+  const obtainOptions = makeObtainOptionsFromArgv(argv)
 
-  const remoteArtifactUrl = await maven.getArtifactUrlInRemoteRepository(artifact, argv.remoteRepository)
+  console.log(obtainOptions)
 
-  const localFilename = maven.getArtifactFilename(artifact)
-
-  await download(remoteArtifactUrl, localFilename)
-
-  execSync(`${argv.javaExecutable} -jar ${localFilename} ${argv.arguments.join(' ')}`, {
-    stdio: 'inherit'
-  })
+  await maven.obtainArtifact(obtainOptions)
 }
 
 module.exports = {
