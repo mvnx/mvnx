@@ -7,6 +7,7 @@
     "mvnx": "bin/mvnx.js"
   },
   "scripts": {
+    "bundle": "rollup -c && node ./scripts/replace-extend.js",
     "lint": "standard",
     "lint:fix": "standard --fix",
     "test": "npm run lint"
