@@ -70,6 +70,18 @@ async function canReadLocalArtifact (path) {
   }
 }
 
+async function rmdirp (from, to) {
+  const fromSegments = from.split(path.sep)
+  const toSegments = to.split(path.sep)
+    .slice(fromSegments.length)
+
+  for (let i = toSegments.length; i >= 0; --i) {
+    const deletePath = path.join(...fromSegments, ...toSegments.slice(0, i))
+
+    await fs.promises.rmdir(deletePath)
+  }
+}
+
 async function obtainArtifact (options) {
   const artifact = parseArtifactName(options.artifactName)
 
@@ -99,8 +111,9 @@ async function obtainArtifact (options) {
 
     let downloadedArtifactPath
     let temporary
+    let firstCreatedDirectoryForDownload = null
     if (localArtifactPath) {
-      await mkdirp(path.dirname(localArtifactPath))
+      firstCreatedDirectoryForDownload = await mkdirp(path.dirname(localArtifactPath))
 
       downloadedArtifactPath = localArtifactPath
 
@@ -113,7 +126,14 @@ async function obtainArtifact (options) {
       temporary = true
     }
 
-    const foundInRemoteRepository = await remote.download(remoteArtifactUrl, downloadedArtifactPath)
+    let foundInRemoteRepository = null
+    try {
+      foundInRemoteRepository = await remote.download(remoteArtifactUrl, downloadedArtifactPath)
+    } finally {
+      if (firstCreatedDirectoryForDownload && !foundInRemoteRepository) {
+        await rmdirp(firstCreatedDirectoryForDownload, path.dirname(localArtifactPath))
+      }
+    }
 
     if (foundInRemoteRepository) {
       log(`Retrieved artifact from remote repository\n  ${remoteArtifactUrl}`)
