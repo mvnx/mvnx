@@ -28,7 +28,7 @@ mvnx is a JAR file executor with a catch: it obtains the JAR from local or remot
   * **No Configuration Needed.** There's no need for convoluted configuration, XML files, DSLs and the usual ceremony in the JVM world. You just specifiy the Maven coordinates along with the command line arguments and mvnx will take care of the rest.
   * **Local Repository Caching.**  Artifact resolution starts in your local repository for maximum speed and minimal network usage. Downloaded artifacts are also cached in the local repository.
 
-However, be aware of the following limitations (will be addressed in future versions):
+However, be aware of the following limitations:
 
   * Fat JARs only. mvnx will not perform dependency resolution.
   * Public repositories only. Maven repository login is currently not possible.
