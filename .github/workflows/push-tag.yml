@@ -74,7 +74,7 @@ jobs:
 
       - name: Get Release
         id: get_release
-        uses: bruceadams/get-release@v1
+        uses: bruceadams/get-release@v1.2.0
 
       - name: Get the version
         id: get_version
