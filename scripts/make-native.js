@@ -13,7 +13,7 @@ async function makeTarget (target) {
 
   console.log(`Building native executable for target "${target}" at "${output}"`)
 
-  await pkg.exec(['.', '--target', target, '--output', output])
+  await pkg.exec(['bin/mvnx.js', '--target', target, '--output', output])
 }
 
 (async function main () {

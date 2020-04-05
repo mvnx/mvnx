@@ -7,7 +7,7 @@
     "mvnx": "bin/mvnx.js"
   },
   "scripts": {
-    "bundle": "ncc build src/index.js -m -o dist/index.js",
+    "bundle": "ncc build src/index.js -m -o dist",
     "lint": "standard",
     "lint:fix": "standard --fix",
     "make-native": "npm run bundle && node ./scripts/make-native.js",

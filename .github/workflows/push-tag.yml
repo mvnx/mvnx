@@ -65,7 +65,7 @@ jobs:
           - os: macos-latest
             target: node10-macos-x64
             output_fragment: node10-macos-x64
-            upload_fragment: macos-x64.exe
+            upload_fragment: macos-x64
     steps:
       - uses: actions/checkout@v2
 
