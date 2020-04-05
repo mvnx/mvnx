@@ -61,7 +61,7 @@ jobs:
           - os: windows-latest
             target: node10-win-x64
             output_fragment: node10-win-x64.exe
-            upload_name: win-x64
+            upload_fragment: win-x64.exe
     steps:
       - uses: actions/checkout@v2
 
@@ -93,5 +93,5 @@ jobs:
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./native/mvnx-${{ steps.get_version.outputs.version }}-${{  matrix.output_fragment }}
-          asset_name: mvnx-${{ steps.get_version.outputs.version }}-${{ matrix.upload_name }}
+          asset_name: mvnx-${{ steps.get_version.outputs.version }}-${{ matrix.upload_fragment }}
           asset_content_type: application/octet-stream
