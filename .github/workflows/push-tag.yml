@@ -56,9 +56,11 @@ jobs:
         include:
           - os: ubuntu-latest
             target: node10-linux-x64
+            output_fragment: node10-linux-x64
             upload_name: linux-x64
           - os: windows-latest
             target: node10-win-x64
+            output_fragment: node10-win-x64.exe
             upload_name: win-x64
     steps:
       - uses: actions/checkout@v2
@@ -90,6 +92,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./native/mvnx-${{ steps.get_version.outputs.VERSION }}-${{  matrix.target }}
+          asset_path: ./native/mvnx-${{ steps.get_version.outputs.VERSION }}-${{  matrix.output_fragment }}
           asset_name: mvnx-${{ steps.get_version.outputs.VERSION }}-${{ matrix.upload_name }}
           asset_content_type: application/octet-stream
