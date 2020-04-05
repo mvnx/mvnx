@@ -82,7 +82,7 @@ jobs:
 
       - name: Get the version
         id: get_version
-        uses: battila7/get-version-action@v1.1.0
+        uses: battila7/get-version-action@v1.2.0
 
       - run: npm run make-native ${{  matrix.target }}
 
