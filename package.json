@@ -10,6 +10,7 @@
     "bundle": "rollup -c && node ./scripts/replace-extend.js && terser dist/index.js -c -o dist/index.js",
     "lint": "standard",
     "lint:fix": "standard --fix",
+    "make-native": "npm run bundle && node ./scripts/make-native.js",
     "test": "npm run lint"
   },
   "husky": {
