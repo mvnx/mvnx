@@ -2,7 +2,7 @@
   "name": "mvnx",
   "version": "1.2.3",
   "description": "Execute JARs from maven repositories with no strings attached.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "bin": {
     "mvnx": "bin/mvnx.js"
   },
@@ -47,5 +47,8 @@
     "standard": "14.3.3",
     "yargs": "15.3.1"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "files": [
+    "bin"
+  ]
 }
