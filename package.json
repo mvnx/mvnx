@@ -10,7 +10,8 @@
     "bundle": "rollup -c && node ./scripts/replace-extend.js",
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "test": "npm run lint"
+    "test": "npm run lint",
+    "version": "what-version -f npm.version git.branch git.hash > src/version.json"
   },
   "husky": {
     "hooks": {
