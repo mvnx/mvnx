@@ -6,24 +6,6 @@ on:
     - 'v*'
 
 jobs:
-  publish-npm:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          registry-url: https://registry.npmjs.org/
-
-      - run: npm ci
-
-      - run: npm run bundle
-        
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-
   create-release:
     runs-on: ubuntu-latest
     steps:
@@ -47,30 +29,65 @@ jobs:
           draft: false
           prerelease: false
 
+  publish-npm:
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+
+      - run: npm ci
+
+      - run: npm run bundle
+        
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+
+  make-native-executable:
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: node10-linux-x64
+            upload_name: linux-x64
+          - os: windows-latest
+            target: node10-win-x64
+            upload_name: win-x64
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+
+      - run: npm ci
+
+      - run: npm run bundle
+
+      - name: Get Release
+        id: get_release
+        uses: bruceadams/get-release@v1
+
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
-      - run: npm run make-native node10-linux-x64
+      - run: npm run make-native ${{  matrix.target }}
 
-      - name: Upload Linux x64 Native Executable
+      - name: Upload Native Executable
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./native/mvnx-${{ steps.get_version.outputs.VERSION }}-node10-linux-x64
-          asset_name: mvnx-${{ steps.get_version.outputs.VERSION }}-linux-x64
-          asset_content_type: application/octet-stream
-
-      - run: npm run make-native node10-linux-x86
-
-      - name: Upload Linux x86 Native Executable
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./native/mvnx-${{ steps.get_version.outputs.VERSION }}-node10-linux-x86
-          asset_name: mvnx-${{ steps.get_version.outputs.VERSION }}-linux-x86
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./native/mvnx-${{ steps.get_version.outputs.VERSION }}-${{  matrix.target }}
+          asset_name: mvnx-${{ steps.get_version.outputs.VERSION }}-${{ matrix.upload_name }}
           asset_content_type: application/octet-stream
