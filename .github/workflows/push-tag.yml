@@ -47,6 +47,10 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
       - run: npm run make-native node10-linux-x64
 
       - name: Upload Linux x64 Native Executable
@@ -55,8 +59,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./native/mvnx-${{ github.ref }}-node10-linux-x64
-          asset_name: mvnx-${{ github.ref }}-linux-x64
+          asset_path: ./native/mvnx-${{ steps.get_version.outputs.VERSION }}-node10-linux-x64
+          asset_name: mvnx-${{ steps.get_version.outputs.VERSION }}-linux-x64
           asset_content_type: application/octet-stream
 
       - run: npm run make-native node10-linux-x86
@@ -67,6 +71,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./native/mvnx-${{ github.ref }}-node10-linux-x86
-          asset_name: mvnx-${{ github.ref }}-linux-x86
+          asset_path: ./native/mvnx-${{ steps.get_version.outputs.VERSION }}-node10-linux-x86
+          asset_name: mvnx-${{ steps.get_version.outputs.VERSION }}-linux-x86
           asset_content_type: application/octet-stream
