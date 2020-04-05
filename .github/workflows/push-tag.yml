@@ -57,11 +57,15 @@ jobs:
           - os: ubuntu-latest
             target: node10-linux-x64
             output_fragment: node10-linux-x64
-            upload_name: linux-x64
+            upload_fragment: linux-x64
           - os: windows-latest
             target: node10-win-x64
             output_fragment: node10-win-x64.exe
             upload_fragment: win-x64.exe
+          - os: macos-latest
+            target: node10-macos-x64
+            output_fragment: node10-macos-x64
+            upload_fragment: macos-x64.exe
     steps:
       - uses: actions/checkout@v2
 
