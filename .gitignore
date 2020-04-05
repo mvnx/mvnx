@@ -116,3 +116,7 @@ web_modules/
 # Native output
 
 native
+
+# Minified output
+
+dist
