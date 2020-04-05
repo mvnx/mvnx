@@ -33,6 +33,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "11.0.2",
     "@rollup/plugin-node-resolve": "7.1.1",
+    "@vendoor/what-version": "^1.1.1",
     "chalk": "4.0.0",
     "husky": "4.2.3",
     "mkdirp": "1.0.3",
