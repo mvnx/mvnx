@@ -21,18 +21,34 @@ function splitArgv (originalArgv) {
   }
 }
 
-function justDisplayTheHelp (originalArgv) {
+function justDisplayHelpOrVersion (originalArgv) {
   if (originalArgv.length === 2) {
     originalArgv.push('-h')
     return true
   }
 
-  return (originalArgv.length === 3) && (originalArgv[2] === '-h' || originalArgv[2] === '--help')
+  if (originalArgv.length === 3) {
+    if (originalArgv[2] === '-h' || originalArgv[2] === '--help') {
+      return true
+    }
+
+    if (originalArgv[2] === '-v' || originalArgv[2] === '--version') {
+      return true
+    }
+  }
+
+  return false
+}
+
+function retreiveVersion () {
+  const packageJson = require('../package')
+
+  return packageJson.version
 }
 
 function cli (originalArgv) {
   let split = null
-  if (!justDisplayTheHelp(originalArgv)) {
+  if (!justDisplayHelpOrVersion(originalArgv)) {
     split = splitArgv(originalArgv)
   }
 
@@ -76,6 +92,8 @@ function cli (originalArgv) {
     })
     .help()
     .alias('help', 'h')
+    .version(retreiveVersion())
+    .alias('version', 'v')
     .strict(true)
     .argv
 

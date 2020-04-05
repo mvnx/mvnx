@@ -17743,6 +17743,97 @@ class UnrecognizableArtifactError extends BaseMvnxError_1 {
 
 var UnrecognizableArtifactError_1 = UnrecognizableArtifactError;
 
+var name = "mvnx";
+var version$1 = "1.2.3";
+var description = "Execute JARs from maven repositories with no strings attached.";
+var main = "src/index.js";
+var bin = {
+	mvnx: "bin/mvnx.js"
+};
+var scripts = {
+	bundle: "npm run version && rollup -c && node ./scripts/replace-extend.js",
+	lint: "standard",
+	"lint:fix": "standard --fix",
+	test: "npm run lint",
+	version: "what-version -f npm.version git.branch git.hash > src/version.json"
+};
+var husky = {
+	hooks: {
+		"pre-commit": "npm run lint"
+	}
+};
+var repository = {
+	type: "git",
+	url: "git+https://github.com/mvnx/mvnx.git"
+};
+var author = "Attila Bagossy";
+var license = "Apache-2.0";
+var bugs = {
+	url: "https://github.com/mvnx/mvnx/issues"
+};
+var homepage = "https://github.com/mvnx/mvnx#readme";
+var standard = {
+	ignore: "dist/*"
+};
+var devDependencies = {
+	"@rollup/plugin-commonjs": "11.0.2",
+	"@rollup/plugin-json": "4.0.2",
+	"@rollup/plugin-node-resolve": "7.1.1",
+	"@vendoor/what-version": "1.1.1",
+	chalk: "4.0.0",
+	husky: "4.2.3",
+	mkdirp: "1.0.3",
+	"mvn-artifact-filename": "4.1.0",
+	"mvn-artifact-name-parser": "4.1.0",
+	"mvn-artifact-url": "4.1.0",
+	pkg: "4.4.5",
+	rollup: "2.3.2",
+	"rollup-plugin-node-externals": "2.1.3",
+	standard: "14.3.3",
+	yargs: "15.3.1"
+};
+var dependencies = {
+};
+var _package = {
+	name: name,
+	version: version$1,
+	description: description,
+	main: main,
+	bin: bin,
+	scripts: scripts,
+	husky: husky,
+	repository: repository,
+	author: author,
+	license: license,
+	bugs: bugs,
+	homepage: homepage,
+	standard: standard,
+	devDependencies: devDependencies,
+	dependencies: dependencies
+};
+
+var _package$1 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	name: name,
+	version: version$1,
+	description: description,
+	main: main,
+	bin: bin,
+	scripts: scripts,
+	husky: husky,
+	repository: repository,
+	author: author,
+	license: license,
+	bugs: bugs,
+	homepage: homepage,
+	standard: standard,
+	devDependencies: devDependencies,
+	dependencies: dependencies,
+	'default': _package
+});
+
+var require$$0 = getCjsExportFromNamespace(_package$1);
+
 function splitArgv (originalArgv) {
   const artifactArgIndex = originalArgv.findIndex(maven.probablyAnArtifactName);
 
@@ -17756,18 +17847,34 @@ function splitArgv (originalArgv) {
   }
 }
 
-function justDisplayTheHelp (originalArgv) {
+function justDisplayHelpOrVersion (originalArgv) {
   if (originalArgv.length === 2) {
     originalArgv.push('-h');
     return true
   }
 
-  return (originalArgv.length === 3) && (originalArgv[2] === '-h' || originalArgv[2] === '--help')
+  if (originalArgv.length === 3) {
+    if (originalArgv[2] === '-h' || originalArgv[2] === '--help') {
+      return true
+    }
+
+    if (originalArgv[2] === '-v' || originalArgv[2] === '--version') {
+      return true
+    }
+  }
+
+  return false
+}
+
+function retreiveVersion () {
+  const packageJson = require$$0;
+
+  return packageJson.version
 }
 
 function cli (originalArgv) {
   let split = null;
-  if (!justDisplayTheHelp(originalArgv)) {
+  if (!justDisplayHelpOrVersion(originalArgv)) {
     split = splitArgv(originalArgv);
   }
 
@@ -17811,6 +17918,8 @@ function cli (originalArgv) {
     })
     .help()
     .alias('help', 'h')
+    .version(retreiveVersion())
+    .alias('version', 'v')
     .strict(true)
     .argv;
 

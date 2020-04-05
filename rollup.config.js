@@ -1,4 +1,5 @@
 import commonjs from '@rollup/plugin-commonjs'
+import json from '@rollup/plugin-json'
 import resolve from '@rollup/plugin-node-resolve'
 import externals from 'rollup-plugin-node-externals'
 
@@ -14,6 +15,7 @@ export default {
       preferBuiltins: true
     }),
     commonjs(),
+    json(),
     externals()
   ]
 }
