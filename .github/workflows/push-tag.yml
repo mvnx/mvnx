@@ -82,7 +82,7 @@ jobs:
 
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        uses: battila7/get-version-action@v1.1.0
 
       - run: npm run make-native ${{  matrix.target }}
 
@@ -92,6 +92,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./native/mvnx-${{ steps.get_version.outputs.VERSION }}-${{  matrix.output_fragment }}
-          asset_name: mvnx-${{ steps.get_version.outputs.VERSION }}-${{ matrix.upload_name }}
+          asset_path: ./native/mvnx-${{ steps.get_version.outputs.version }}-${{  matrix.output_fragment }}
+          asset_name: mvnx-${{ steps.get_version.outputs.version }}-${{ matrix.upload_name }}
           asset_content_type: application/octet-stream
