@@ -3,9 +3,9 @@ const fs = require('fs')
 
 const RemoteGetError = require('./error/RemoteGetError')
 
-async function intoString (url) {
+async function intoString (url, options = {}) {
   return new Promise(function downloadPromise (resolve, reject) {
-    const request = https.get(url, function responseHandler (response) {
+    const request = https.get(url, options, function responseHandler (response) {
       if (response.statusCode !== 200) {
         resolve(null)
 
@@ -33,9 +33,9 @@ async function intoString (url) {
   })
 }
 
-async function intoFile (url, destination) {
+async function intoFile (url, destination, options = {}) {
   return new Promise(function downloadPromise (resolve, reject) {
-    const request = https.get(url, function responseHandler (response) {
+    const request = https.get(url, options, function responseHandler (response) {
       if (response.statusCode !== 200) {
         resolve(false)
 
@@ -63,7 +63,14 @@ async function intoFile (url, destination) {
   })
 }
 
+function basicAuthOptions (username, password) {
+  return {
+    auth: `${username}:${password}`
+  }
+}
+
 module.exports = {
   intoString,
-  intoFile
+  intoFile,
+  basicAuthOptions
 }
