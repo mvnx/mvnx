@@ -4,16 +4,14 @@ const path = require('path')
 
 const mkdirp = require('mkdirp')
 const mvnArtifactFilename = require('mvn-artifact-filename').default
-const mvnArtifactNameParser = require('mvn-artifact-name-parser').default
 const mvnArtifactUrl = require('mvn-artifact-url').default
 
+const artifactParser = require('./artifact-parser')
 const log = require('./log')
 const remote = require('./remote')
 
 const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
 const InvalidArtifactError = require('./error/InvalidArtifactError')
-
-const ARTIFACT_NAME_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9_:.-]*?[a-zA-Z0-9]$/g
 
 function getArtifactFilename (artifact) {
   return mvnArtifactFilename(artifact)
@@ -21,7 +19,7 @@ function getArtifactFilename (artifact) {
 
 function parseArtifactName (artifactName) {
   try {
-    const artifact = mvnArtifactNameParser(artifactName)
+    const artifact = artifactParser.parseArtifactName(artifactName)
 
     artifact.groupIdSegments = artifact.groupId.split('.')
     artifact.filename = getArtifactFilename(artifact)
@@ -153,13 +151,7 @@ async function obtainArtifact (options) {
 }
 
 function probablyAnArtifactName (str) {
-  const regexMatches = str.match(ARTIFACT_NAME_REGEX)
-
-  if (!regexMatches) {
-    return false
-  }
-
-  return str.split(':').length >= 3
+  return artifactParser.isArtifactName(str)
 }
 
 module.exports = {
