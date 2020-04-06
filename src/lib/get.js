@@ -1,7 +1,7 @@
 const https = require('https')
 const fs = require('fs')
 
-const RemoteDownloadError = require('./error/RemoteDownloadError')
+const RemoteGetError = require('./error/RemoteGetError')
 
 async function intoString (url) {
   return new Promise(function downloadPromise (resolve, reject) {
@@ -23,12 +23,12 @@ async function intoString (url) {
       })
 
       response.on('error', function downloadError (err) {
-        reject(new RemoteDownloadError({ url }, err))
+        reject(new RemoteGetError({ url }, err))
       })
     })
 
     request.on('error', function requestError (err) {
-      reject(new RemoteDownloadError({ url }, err))
+      reject(new RemoteGetError({ url }, err))
     })
   })
 }
@@ -51,14 +51,14 @@ async function intoFile (url, destination) {
       })
 
       output.on('error', function downloadError (err) {
-        reject(new RemoteDownloadError({ url, destination }, err))
+        reject(new RemoteGetError({ url, destination }, err))
 
         fs.unlinkSync(destination)
       })
     })
 
     request.on('error', function requestError (err) {
-      reject(new RemoteDownloadError({ url, destination }, err))
+      reject(new RemoteGetError({ url, destination }, err))
     })
   })
 }

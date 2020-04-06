@@ -1,12 +1,16 @@
 const BaseMvnxError = require('./BaseMvnxError')
 
-class RemoteDownloadError extends BaseMvnxError {
+class RemoteGetError extends BaseMvnxError {
   constructor (context, cause) {
-    super('EREMOTEDOWNLOAD', context, cause)
+    super('EREMOTEGET', context, cause)
   }
 
   get details () {
-    return `Failed to download "${this.context.url}" to local destination "${this.context.destination}".`
+    if (this.context.destination) {
+      return `Failed to download "${this.context.url}" to local destination "${this.context.destination}".`
+    } else {
+      return `Failed to get contents from "${this.context.url}".`
+    }
   }
 
   get solution () {
@@ -17,4 +21,4 @@ class RemoteDownloadError extends BaseMvnxError {
   }
 }
 
-module.exports = RemoteDownloadError
+module.exports = RemoteGetError
