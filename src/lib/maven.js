@@ -5,26 +5,16 @@ const path = require('path')
 const mkdirp = require('mkdirp')
 const mvnArtifactUrl = require('mvn-artifact-url').default
 
-const artifactFilename = require('./artifact-filename')
-const artifactParser = require('./artifact-parser')
+const artifact = require('./artifact/artifact')
 const log = require('./log')
 const get = require('./get')
 
 const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
 const InvalidArtifactError = require('./error/InvalidArtifactError')
 
-function getArtifactFilename (artifact) {
-  return artifactFilename.forArtifact(artifact)
-}
-
 function parseArtifactName (artifactName) {
   try {
-    const artifact = artifactParser.parseArtifactName(artifactName)
-
-    artifact.groupIdSegments = artifact.groupId.split('.')
-    artifact.filename = getArtifactFilename(artifact)
-
-    return artifact
+    return artifact.fromName(artifactName)
   } catch {
     throw new InvalidArtifactError({ artifactName })
   }
@@ -150,12 +140,8 @@ async function obtainArtifact (options) {
   })
 }
 
-function probablyAnArtifactName (str) {
-  return artifactParser.isArtifactName(str)
-}
-
 module.exports = {
   obtainArtifact,
-  probablyAnArtifactName,
+  probablyAnArtifactName: artifact.isArtifactName,
   getLocalRepositoryPath
 }

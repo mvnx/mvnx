@@ -1,6 +1,8 @@
 const ARTIFACT_SEGMENT_SEPARATOR = ':'
 const ARTIFACT_SEGMENT_REGEX = /^[a-zA-Z0-9]([a-zA-Z0-9-_.][a-zA-Z0-9]|[a-zA-Z0-9])*$/g
 
+const GROUP_ID_SEGMENT_SEPARATOR = '.'
+
 const MIN_SEGMENT_COUNT = 2
 const MAX_SEGMENT_COUNT = 5
 
@@ -26,9 +28,11 @@ function parseArtifactName (name) {
 
   const artifact = {
     groupId: segments[0],
+    groupIdSegments: segments[0].split(GROUP_ID_SEGMENT_SEPARATOR),
     artifactId: segments[1],
     extension: segmentCount > 3 ? segments[2] : null,
-    classifier: segmentCount > 4 ? segments[3] : null
+    classifier: segmentCount > 4 ? segments[3] : null,
+    segments
   }
 
   if (segmentCount === MIN_SEGMENT_COUNT) {
