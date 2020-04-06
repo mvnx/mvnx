@@ -24,7 +24,18 @@ function filterUndefined (obj) {
   return ret
 }
 
+function normalize (obj) {
+  return obj
+    ? filterUndefined(obj)
+    : {}
+}
+
 const Configuration = {
+  _deps: {
+    fs,
+    fastXmlParser
+  },
+
   Configuration (mvnxConfiguration, mvnSettings, env) {
     this.mvnxConfiguration = mvnxConfiguration
     this.mvnSettings = mvnSettings
@@ -34,10 +45,10 @@ const Configuration = {
   },
 
   getRemoteRepositoryConfiguration (repository) {
-    const envCredentials = filterUndefined(this._getCredentialsFromEnv() || {})
-    const mvnSettingsServer = filterUndefined(this._getServerFromMvnSettings(repository) || {})
-    const mvnxConfServerById = filterUndefined(this._getServerByIdFromMvnxConfiguration(repository) || {})
-    const mvnxConfServerByUrl = filterUndefined(this._getServerByUrlFromMvnxConfiguration(repository) || {})
+    const envCredentials = this._getCredentialsFromEnv()
+    const mvnSettingsServer = this._getServerFromMvnSettings(repository)
+    const mvnxConfServerById = this._getServerByIdFromMvnxConfiguration(repository)
+    const mvnxConfServerByUrl = this._getServerByUrlFromMvnxConfiguration(repository)
 
     const credentials = Object.assign({},
       mvnxConfServerByUrl,
@@ -57,34 +68,41 @@ const Configuration = {
     }
   },
 
+  forgetCredentials () {
+    delete this.env[USERNAME_ENVIRONMENT_KEY]
+    delete this.env[PASSWORD_ENVIRONMENT_KEY]
+    delete this.mvnSettings
+    delete this.mvnxConfiguration
+  },
+
   _credentialsInEnv () {
     return this.env[USERNAME_ENVIRONMENT_KEY] && this.env[PASSWORD_ENVIRONMENT_KEY]
   },
 
   _getCredentialsFromEnv () {
-    return {
+    return normalize({
       username: this.env[USERNAME_ENVIRONMENT_KEY],
       password: this.env[PASSWORD_ENVIRONMENT_KEY]
-    }
+    })
   },
 
   _getServerFromMvnSettings (id) {
-    return this.mvnSettings.servers.find(s => s.id === id)
+    return normalize(this.mvnSettings.servers.find(s => s.id === id))
   },
 
   _getServerByIdFromMvnxConfiguration (id) {
-    return this.mvnxConfiguration.servers.find(s => s.id === id)
+    return normalize(this.mvnxConfiguration.servers.find(s => s.id === id))
   },
 
   _getServerByUrlFromMvnxConfiguration (url) {
-    return this.mvnxConfiguration.servers.find(s => s.url === url)
+    return normalize(this.mvnxConfiguration.servers.find(s => s.url === url))
   }
 }
 
-async function readMvnxConfiguration (baseDirectory) {
+Configuration._readMvnxConfiguration = async function readMvnxConfiguration (baseDirectory) {
   let storedConfiguration
   try {
-    storedConfiguration = await fs.promises.readFile(path.join(baseDirectory, 'mvnx.json'), { encoding: 'utf-8' })
+    storedConfiguration = await this._deps.fs.promises.readFile(path.join(baseDirectory, 'mvnx.json'), { encoding: 'utf-8' })
   } catch {
     return emptyMvnxConfiguration
   }
@@ -92,25 +110,23 @@ async function readMvnxConfiguration (baseDirectory) {
   return JSON.parse(storedConfiguration)
 }
 
-async function readMvnSettings (baseDirectory) {
+Configuration._readMvnSettings = async function readMvnSettings (baseDirectory) {
   let storedSettings
   try {
-    storedSettings = await fs.promises.readFile(path.join(baseDirectory, 'settings.xml'), { encoding: 'utf-8' })
+    storedSettings = await this._deps.fs.promises.readFile(path.join(baseDirectory, 'settings.xml'), { encoding: 'utf-8' })
   } catch {
     return emptyMvnSettings
   }
 
-  return fastXmlParser.parse(storedSettings)
+  return this._deps.fastXmlParser.parse(storedSettings)
 }
 
-async function readConfiguration (localRepositoryPath, env) {
-  const mvnxConfiguration = await readMvnxConfiguration(localRepositoryPath)
-  const mvnSettings = await readMvnSettings(localRepositoryPath)
+Configuration.read = async function read (localRepositoryPath, env) {
+  const mvnxConfiguration = await this._readMvnxConfiguration(localRepositoryPath)
+  const mvnSettings = await this._readMvnSettings(localRepositoryPath)
 
   const configuration = Object.create(Configuration)
   return configuration.Configuration(mvnxConfiguration, mvnSettings, env)
 }
 
-module.exports = {
-  read: readConfiguration
-}
+module.exports = Configuration

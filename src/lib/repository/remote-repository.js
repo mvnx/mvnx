@@ -40,7 +40,7 @@ const RemoteRepository = {
   },
 
   pathToArtifact (artifact) {
-    return `${this.basepathForArtifact(this.url, artifact)}/${artifact.version}/${artifact.filename}`
+    return `${this.basepathToArtifact(artifact)}/${artifact.version}/${artifact.filename}`
   },
 
   async metadataForArtifact (artifact) {

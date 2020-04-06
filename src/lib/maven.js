@@ -3,11 +3,11 @@ const path = require('path')
 
 const mkdirp = require('mkdirp')
 
-const configuration = require('./configuration')
 const log = require('./log')
 const get = require('./get')
 
 const Artifact = require('./artifact/artifact')
+const Configuration = require('./configuration')
 const LocalRepository = require('./repository/local-repository')
 const RemoteRepository = require('./repository/remote-repository')
 
@@ -30,7 +30,7 @@ async function obtainArtifact (options) {
 
   const localRepository = Object.create(LocalRepository).LocalRepository(options.localRepository)
 
-  const config = await configuration.read(localRepository.path, process.env)
+  const config = await Configuration.read(localRepository.path, process.env)
   const remoteRepositoryConfig = config.getRemoteRepositoryConfiguration(options.remoteRepository)
   const remoteRepository = Object.create(RemoteRepository).RemoteRepository(
     remoteRepositoryConfig.url,
@@ -38,12 +38,9 @@ async function obtainArtifact (options) {
     remoteRepositoryConfig.password
   )
 
-  console.log(artifact)
   if (options.useRemoteRepository && (artifact.latest || artifact.snapshot)) {
     artifact = await remoteRepository.artifactWithRemoteVersion(artifact)
   }
-
-  console.log(artifact)
 
   let localArtifactPath = null
   if (options.useLocalRepository) {
