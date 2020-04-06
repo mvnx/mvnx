@@ -14,14 +14,14 @@ const emptyMvnSettings = {
 const USERNAME_ENVIRONMENT_KEY = 'MVNX_REMOTE_USERNAME'
 const PASSWORD_ENVIRONMENT_KEY = 'MVNX_REMOTE_PASSWORD'
 
-function filterUndefined(obj) {
-  const ret = {};
+function filterUndefined (obj) {
+  const ret = {}
 
   Object.keys(obj)
-      .filter((key) => obj[key] !== undefined)
-      .forEach((key) => ret[key] = obj[key]);
+    .filter((key) => obj[key] !== undefined)
+    .forEach((key) => { ret[key] = obj[key] })
 
-  return ret;
+  return ret
 }
 
 const Configuration = {

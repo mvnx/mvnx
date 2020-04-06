@@ -66,7 +66,7 @@ async function intoFile (url, destination, options = {}) {
 
 function basicAuthOptions (username, password) {
   return {
-    auth: `${username}:${password}`  
+    auth: `${username}:${password}`
   }
 }
 
