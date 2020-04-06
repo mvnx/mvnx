@@ -164,5 +164,6 @@ function probablyAnArtifactName (str) {
 
 module.exports = {
   obtainArtifact,
-  probablyAnArtifactName
+  probablyAnArtifactName,
+  getLocalRepositoryPath
 }
