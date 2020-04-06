@@ -9,8 +9,6 @@ const SNAPSHOT_SUFFIX = '-SNAPSHOT'
 function isArtifactName (name) {
   const segments = name.split(ARTIFACT_SEGMENT_SEPARATOR)
 
-  console.log(segments)
-
   if (segments.length < MIN_SEGMENT_COUNT || segments.length > MAX_SEGMENT_COUNT) {
     return false
   }
