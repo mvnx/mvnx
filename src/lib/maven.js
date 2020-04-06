@@ -8,7 +8,7 @@ const mvnArtifactUrl = require('mvn-artifact-url').default
 
 const artifactParser = require('./artifact-parser')
 const log = require('./log')
-const remote = require('./remote')
+const get = require('./get')
 
 const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
 const InvalidArtifactError = require('./error/InvalidArtifactError')
@@ -126,7 +126,7 @@ async function obtainArtifact (options) {
 
     let foundInRemoteRepository = null
     try {
-      foundInRemoteRepository = await remote.download(remoteArtifactUrl, downloadedArtifactPath)
+      foundInRemoteRepository = await get.intoFile(remoteArtifactUrl, downloadedArtifactPath)
     } finally {
       if (firstCreatedDirectoryForDownload && !foundInRemoteRepository) {
         await rmdirp(firstCreatedDirectoryForDownload, path.dirname(localArtifactPath))

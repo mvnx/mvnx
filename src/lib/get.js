@@ -3,7 +3,7 @@ const fs = require('fs')
 
 const RemoteDownloadError = require('./error/RemoteDownloadError')
 
-async function download (url, destination) {
+async function intoFile (url, destination) {
   return new Promise(function downloadPromise (resolve, reject) {
     const request = https.get(url, function responseHandler (response) {
       if (response.statusCode !== 200) {
@@ -34,5 +34,5 @@ async function download (url, destination) {
 }
 
 module.exports = {
-  download
+  intoFile
 }
