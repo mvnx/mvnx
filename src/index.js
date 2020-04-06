@@ -82,7 +82,7 @@ function cli (originalArgv) {
         alias: 'r',
         describe: 'URL of a remote repository. Will use Maven Central by default.',
         type: 'string',
-        default: 'https://repo1.maven.org/maven2'
+        default: maven.DEFAULT_REMOTE_REPOSITORY_URL
       },
       quiet: {
         alias: 'q',

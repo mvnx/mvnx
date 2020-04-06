@@ -125,5 +125,6 @@ async function obtainArtifact (options) {
 
 module.exports = {
   obtainArtifact,
-  probablyAnArtifactName: artifact.isArtifactName
+  probablyAnArtifactName: artifact.isArtifactName,
+  DEFAULT_REMOTE_REPOSITORY_URL: RemoteRepository.DEFAULT_REMOTE_REPOSITORY_URL
 }
