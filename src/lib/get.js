@@ -1,5 +1,6 @@
-const https = require('https')
 const fs = require('fs')
+
+const { https } = require('follow-redirects')
 
 const RemoteGetError = require('./error/RemoteGetError')
 
@@ -65,7 +66,7 @@ async function intoFile (url, destination, options = {}) {
 
 function basicAuthOptions (username, password) {
   return {
-    auth: `${username}:${password}`
+    auth: `${username}:${password}`  
   }
 }
 

@@ -3,9 +3,9 @@ const { homedir } = require('os')
 const path = require('path')
 
 const mkdirp = require('mkdirp')
-const mvnArtifactUrl = require('mvn-artifact-url').default
 
 const artifact = require('./artifact/artifact')
+const configuration = require('./configuration')
 const log = require('./log')
 const get = require('./get')
 
@@ -18,10 +18,6 @@ function parseArtifactName (artifactName) {
   } catch {
     throw new InvalidArtifactError({ artifactName })
   }
-}
-
-function getArtifactUrlInRemoteRepository (artifact, remoteRepository) {
-  return mvnArtifactUrl(artifact, remoteRepository)
 }
 
 function getLocalRepositoryPath (predefinedLocalRepository) {
@@ -73,8 +69,19 @@ async function rmdirp (from, to) {
 async function obtainArtifact (options) {
   const artifact = parseArtifactName(options.artifactName)
 
+  const config = await configuration.read(getLocalRepositoryPath(options.localRepository), process.env)
+  const remoteRepositoryConfig = config.getRemoteRepositoryConfiguration(options.remoteRepository)
+
+  if (options.useRemoteRepository && (artifact.isLatest || artifact.isSnapshot)) {
+    await artifact.updateVersionFromRepository(remoteRepositoryConfig)
+  }
+
   let localArtifactPath = null
   if (options.useLocalRepository) {
+    if (!options.useRemoteRepository && (artifact.isLatest || artifact.isSnapshot)) {
+      throw new Error('Latest and snapshot versions must be checked against a remote repository!')
+    }
+
     localArtifactPath = getLocalArtifactPath(artifact, options.localRepository)
 
     log(`Searcing for artifact in the local repository at\n  ${localArtifactPath}`)
@@ -93,7 +100,7 @@ async function obtainArtifact (options) {
 
   let remoteArtifactUrl = null
   if (options.useRemoteRepository) {
-    remoteArtifactUrl = await getArtifactUrlInRemoteRepository(artifact, options.remoteRepository)
+    remoteArtifactUrl = artifact.remotePath(remoteRepositoryConfig)
 
     log(`Attempting to retrieve artifact from remote repository at\n  ${remoteArtifactUrl}`)
 
@@ -116,7 +123,8 @@ async function obtainArtifact (options) {
 
     let foundInRemoteRepository = null
     try {
-      foundInRemoteRepository = await get.intoFile(remoteArtifactUrl, downloadedArtifactPath)
+      const getOptions = get.basicAuthOptions(remoteRepositoryConfig.username, remoteRepositoryConfig.password)
+      foundInRemoteRepository = await get.intoFile(remoteArtifactUrl, downloadedArtifactPath, getOptions)
     } finally {
       if (firstCreatedDirectoryForDownload && !foundInRemoteRepository) {
         await rmdirp(firstCreatedDirectoryForDownload, path.dirname(localArtifactPath))

@@ -14,6 +14,16 @@ const emptyMvnSettings = {
 const USERNAME_ENVIRONMENT_KEY = 'MVNX_REMOTE_USERNAME'
 const PASSWORD_ENVIRONMENT_KEY = 'MVNX_REMOTE_PASSWORD'
 
+function filterUndefined(obj) {
+  const ret = {};
+
+  Object.keys(obj)
+      .filter((key) => obj[key] !== undefined)
+      .forEach((key) => ret[key] = obj[key]);
+
+  return ret;
+}
+
 const Configuration = {
   Configuration (mvnxConfiguration, mvnSettings, env) {
     this.mvnxConfiguration = mvnxConfiguration
@@ -24,10 +34,10 @@ const Configuration = {
   },
 
   getRemoteRepositoryConfiguration (repository) {
-    const envCredentials = this._getCredentialsFromEnv()
-    const mvnSettingsServer = this._getServerFromMvnSettings(repository)
-    const mvnxConfServerById = this._getServerByIdFromMvnxConfiguration(repository)
-    const mvnxConfServerByUrl = this._getServerByUrlFromMvnxConfiguration(repository)
+    const envCredentials = filterUndefined(this._getCredentialsFromEnv() || {})
+    const mvnSettingsServer = filterUndefined(this._getServerFromMvnSettings(repository) || {})
+    const mvnxConfServerById = filterUndefined(this._getServerByIdFromMvnxConfiguration(repository) || {})
+    const mvnxConfServerByUrl = filterUndefined(this._getServerByUrlFromMvnxConfiguration(repository) || {})
 
     const credentials = Object.assign({},
       mvnxConfServerByUrl,
@@ -36,7 +46,9 @@ const Configuration = {
       envCredentials
     )
 
-    const url = mvnxConfServerById.url || repository
+    const url = mvnxConfServerById
+      ? mvnxConfServerById.url
+      : repository
 
     return {
       username: credentials.username,
@@ -47,12 +59,6 @@ const Configuration = {
 
   _credentialsInEnv () {
     return this.env[USERNAME_ENVIRONMENT_KEY] && this.env[PASSWORD_ENVIRONMENT_KEY]
-  },
-
-  _credentialsFrom (username, password, url) {
-    return {
-      username, password, url
-    }
   },
 
   _getCredentialsFromEnv () {
@@ -98,8 +104,8 @@ async function readMvnSettings (baseDirectory) {
 }
 
 async function readConfiguration (localRepositoryPath, env) {
-  const mvnxConfiguration = readMvnxConfiguration(localRepositoryPath)
-  const mvnSettings = readMvnSettings(localRepositoryPath)
+  const mvnxConfiguration = await readMvnxConfiguration(localRepositoryPath)
+  const mvnSettings = await readMvnSettings(localRepositoryPath)
 
   const configuration = Object.create(Configuration)
   return configuration.Configuration(mvnxConfiguration, mvnSettings, env)
