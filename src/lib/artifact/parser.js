@@ -36,12 +36,12 @@ function parseArtifactName (name) {
   }
 
   if (segmentCount === MIN_SEGMENT_COUNT) {
-    artifact.isLatest = true
+    artifact.latest = true
   } else {
     artifact.version = segments[segmentCount - 1]
 
     if (artifact.version.endsWith(SNAPSHOT_SUFFIX)) {
-      artifact.isSnapshot = true
+      artifact.snapshot = true
 
       artifact.version = artifact.version.substr(0, artifact.version.indexOf(SNAPSHOT_SUFFIX))
     }

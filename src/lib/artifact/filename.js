@@ -3,9 +3,9 @@ const SNAPSHOT_SUFFIX = '-SNAPSHOT'
 
 function formatVersion (artifact) {
   let suffix = ''
-  if (artifact.isSnapshot) {
-    if (artifact.snapShotVersion) {
-      suffix = `-${artifact.snapShotVersion}`
+  if (artifact.snapshot) {
+    if (artifact.snapshotVersion) {
+      suffix = `-${artifact.snapshotVersion}`
     } else {
       suffix = SNAPSHOT_SUFFIX
     }

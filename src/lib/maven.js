@@ -3,24 +3,15 @@ const path = require('path')
 
 const mkdirp = require('mkdirp')
 
-const artifact = require('./artifact/artifact')
 const configuration = require('./configuration')
 const log = require('./log')
 const get = require('./get')
 
+const Artifact = require('./artifact/artifact')
 const LocalRepository = require('./repository/local-repository')
 const RemoteRepository = require('./repository/remote-repository')
 
 const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
-const InvalidArtifactError = require('./error/InvalidArtifactError')
-
-function parseArtifactName (artifactName) {
-  try {
-    return artifact.fromName(artifactName)
-  } catch {
-    throw new InvalidArtifactError({ artifactName })
-  }
-}
 
 async function rmdirp (from, to) {
   const fromSegments = from.split(path.sep)
@@ -35,7 +26,7 @@ async function rmdirp (from, to) {
 }
 
 async function obtainArtifact (options) {
-  const artifact = parseArtifactName(options.artifactName)
+  let artifact = Artifact.fromName(options.artifactName)
 
   const localRepository = Object.create(LocalRepository).LocalRepository(options.localRepository)
 
@@ -47,13 +38,16 @@ async function obtainArtifact (options) {
     remoteRepositoryConfig.password
   )
 
-  if (options.useRemoteRepository && (artifact.isLatest || artifact.isSnapshot)) {
-    await remoteRepository.versionForArtifact(artifact)
+  console.log(artifact)
+  if (options.useRemoteRepository && (artifact.latest || artifact.snapshot)) {
+    artifact = await remoteRepository.artifactWithRemoteVersion(artifact)
   }
+
+  console.log(artifact)
 
   let localArtifactPath = null
   if (options.useLocalRepository) {
-    if (!options.useRemoteRepository && (artifact.isLatest || artifact.isSnapshot)) {
+    if (!artifact.version && !artifact.snapshotVersion) {
       throw new Error('Latest and snapshot versions must be checked against a remote repository!')
     }
 
@@ -125,6 +119,6 @@ async function obtainArtifact (options) {
 
 module.exports = {
   obtainArtifact,
-  probablyAnArtifactName: artifact.isArtifactName,
+  isArtifactName: Artifact.isArtifactName,
   DEFAULT_REMOTE_REPOSITORY_URL: RemoteRepository.DEFAULT_REMOTE_REPOSITORY_URL
 }

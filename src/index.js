@@ -9,7 +9,7 @@ const maven = require('./lib/maven')
 const UnrecognizableArtifactError = require('./lib/error/UnrecognizableArtifactError')
 
 function splitArgv (originalArgv) {
-  const artifactArgIndex = originalArgv.findIndex(maven.probablyAnArtifactName)
+  const artifactArgIndex = originalArgv.findIndex(maven.isArtifactName)
 
   if (artifactArgIndex === -1) {
     throw new UnrecognizableArtifactError()

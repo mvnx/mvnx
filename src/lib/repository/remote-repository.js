@@ -2,8 +2,22 @@ const fastXmlParser = require('fast-xml-parser')
 
 const get = require('../get')
 
+const Artifact = require('../artifact/artifact')
+
 const METADATA_FILENAME = 'maven-metadata.xml'
 const MAVEN_CENTRAL_REPOSITORY_URL = 'https://repo1.maven.org/maven2'
+
+function copyArtifact (originalProps, newProps) {
+  const artifactObj = {}
+
+  Object.keys(originalProps)
+    .forEach(key => { artifactObj[key.slice(1)] = originalProps[key] })
+
+  Object.keys(newProps)
+    .forEach(key => { artifactObj[key] = newProps[key] })
+
+  return Object.create(Artifact).Artifact(artifactObj)
+}
 
 const RemoteRepository = {
   DEFAULT_REMOTE_REPOSITORY_URL: MAVEN_CENTRAL_REPOSITORY_URL,
@@ -39,17 +53,23 @@ const RemoteRepository = {
       .metadata
   },
 
-  async versionForArtifact (artifact) {
-    if (artifact.isLatest || artifact.isSnapshot) {
+  async artifactWithRemoteVersion (artifact) {
+    if (artifact.latest || artifact.snapshot) {
       const mt = await this.metadataForArtifact(artifact)
 
-      if (artifact.isSnapshot) {
+      if (artifact.snapshot) {
         const snapshot = mt.versioning.snapshot
 
-        artifact.snapshotVersion = `${snapshot.timestamp}-${snapshot.buildNumber}`
-      } else if (artifact.isLatest) {
-        artifact.version = mt.versioning.latest
+        const snapshotVersion = `${snapshot.timestamp}-${snapshot.buildNumber}`
+
+        return copyArtifact(artifact, { snapshotVersion })
+      } else if (artifact.latest) {
+        const version = mt.versioning.latest
+
+        return copyArtifact(artifact, { version })
       }
+    } else {
+      return artifact
     }
   },
 
