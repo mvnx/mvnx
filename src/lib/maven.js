@@ -3,9 +3,9 @@ const { homedir } = require('os')
 const path = require('path')
 
 const mkdirp = require('mkdirp')
-const mvnArtifactFilename = require('mvn-artifact-filename').default
 const mvnArtifactUrl = require('mvn-artifact-url').default
 
+const artifactFilename = require('./artifact-filename')
 const artifactParser = require('./artifact-parser')
 const log = require('./log')
 const get = require('./get')
@@ -14,7 +14,7 @@ const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
 const InvalidArtifactError = require('./error/InvalidArtifactError')
 
 function getArtifactFilename (artifact) {
-  return mvnArtifactFilename(artifact)
+  return artifactFilename.forArtifact(artifact)
 }
 
 function parseArtifactName (artifactName) {
