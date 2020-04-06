@@ -12,6 +12,7 @@ const LocalRepository = require('./repository/local-repository')
 const RemoteRepository = require('./repository/remote-repository')
 
 const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
+const CannotCheckVersionInOnlyLocalError = require('./error/CannotCheckVersionInOnlyLocalError')
 
 async function rmdirp (from, to) {
   const fromSegments = from.split(path.sep)
@@ -45,7 +46,7 @@ async function obtainArtifact (options) {
   let localArtifactPath = null
   if (options.useLocalRepository) {
     if (!artifact.version && !artifact.snapshotVersion) {
-      throw new Error('Latest and snapshot versions must be checked against a remote repository!')
+      throw new CannotCheckVersionInOnlyLocalError()
     }
 
     localArtifactPath = localRepository.pathToArtifact(artifact)
