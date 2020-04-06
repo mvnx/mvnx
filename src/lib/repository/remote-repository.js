@@ -30,7 +30,7 @@ const RemoteRepository = {
   },
 
   async metadataForArtifact (artifact) {
-    const metadataPath = `${this.basepathForArtifact(artifact)}/${METADATA_FILENAME}`
+    const metadataPath = `${this.basepathToArtifact(artifact)}/${METADATA_FILENAME}`
 
     const getOptions = this._deps.get.basicAuthOptions(this.username, this.password)
     const metadataContents = await this._deps.get.intoString(metadataPath, getOptions)
@@ -39,7 +39,7 @@ const RemoteRepository = {
       .metadata
   },
 
-  async remoteVersionForArtifact (artifact) {
+  async versionForArtifact (artifact) {
     if (artifact.isLatest || artifact.isSnapshot) {
       const mt = await this.metadataForArtifact(artifact)
 

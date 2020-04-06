@@ -9,6 +9,7 @@ const log = require('./log')
 const get = require('./get')
 
 const LocalRepository = require('./repository/local-repository')
+const RemoteRepository = require('./repository/remote-repository')
 
 const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
 const InvalidArtifactError = require('./error/InvalidArtifactError')
@@ -40,9 +41,14 @@ async function obtainArtifact (options) {
 
   const config = await configuration.read(localRepository.path, process.env)
   const remoteRepositoryConfig = config.getRemoteRepositoryConfiguration(options.remoteRepository)
+  const remoteRepository = Object.create(RemoteRepository).RemoteRepository(
+    remoteRepositoryConfig.url,
+    remoteRepositoryConfig.username,
+    remoteRepositoryConfig.password
+  )
 
   if (options.useRemoteRepository && (artifact.isLatest || artifact.isSnapshot)) {
-    await artifact.updateVersionFromRepository(remoteRepositoryConfig)
+    await remoteRepository.versionForArtifact(artifact)
   }
 
   let localArtifactPath = null
@@ -69,7 +75,7 @@ async function obtainArtifact (options) {
 
   let remoteArtifactUrl = null
   if (options.useRemoteRepository) {
-    remoteArtifactUrl = artifact.remotePath(remoteRepositoryConfig)
+    remoteArtifactUrl = remoteRepository.pathToArtifact(artifact)
 
     log(`Attempting to retrieve artifact from remote repository at\n  ${remoteArtifactUrl}`)
 
@@ -92,7 +98,7 @@ async function obtainArtifact (options) {
 
     let foundInRemoteRepository = null
     try {
-      const getOptions = get.basicAuthOptions(remoteRepositoryConfig.username, remoteRepositoryConfig.password)
+      const getOptions = get.basicAuthOptions(remoteRepository.username, remoteRepository.password)
       foundInRemoteRepository = await get.intoFile(remoteArtifactUrl, downloadedArtifactPath, getOptions)
     } finally {
       if (firstCreatedDirectoryForDownload && !foundInRemoteRepository) {
