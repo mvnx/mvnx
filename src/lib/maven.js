@@ -1,5 +1,4 @@
 const fs = require('fs')
-const { homedir } = require('os')
 const path = require('path')
 
 const mkdirp = require('mkdirp')
@@ -9,6 +8,8 @@ const configuration = require('./configuration')
 const log = require('./log')
 const get = require('./get')
 
+const LocalRepository = require('./repository/local-repository')
+
 const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
 const InvalidArtifactError = require('./error/InvalidArtifactError')
 
@@ -17,40 +18,6 @@ function parseArtifactName (artifactName) {
     return artifact.fromName(artifactName)
   } catch {
     throw new InvalidArtifactError({ artifactName })
-  }
-}
-
-function getLocalRepositoryPath (predefinedLocalRepository) {
-  if (predefinedLocalRepository) {
-    return predefinedLocalRepository
-  }
-
-  return path.join(homedir(), '.m2')
-}
-
-function getLocalArtifactPath (artifact, predefinedLocalRepository) {
-  const localRepositoryPath = getLocalRepositoryPath(predefinedLocalRepository)
-
-  const localArtifactPath = path.join(
-    localRepositoryPath,
-    'repository',
-    ...artifact.groupIdSegments,
-    artifact.artifactId,
-    artifact.version,
-    artifact.filename
-  )
-
-  return localArtifactPath
-}
-
-async function canReadLocalArtifact (path) {
-  try {
-    await fs.promises.access(path, fs.constants.R_OK)
-
-    return true
-  } catch (e) {
-    // Do not use exceptions for control flow, lol.
-    return false
   }
 }
 
@@ -69,7 +36,9 @@ async function rmdirp (from, to) {
 async function obtainArtifact (options) {
   const artifact = parseArtifactName(options.artifactName)
 
-  const config = await configuration.read(getLocalRepositoryPath(options.localRepository), process.env)
+  const localRepository = Object.create(LocalRepository).LocalRepository(options.localRepository)
+
+  const config = await configuration.read(localRepository.path, process.env)
   const remoteRepositoryConfig = config.getRemoteRepositoryConfiguration(options.remoteRepository)
 
   if (options.useRemoteRepository && (artifact.isLatest || artifact.isSnapshot)) {
@@ -82,11 +51,11 @@ async function obtainArtifact (options) {
       throw new Error('Latest and snapshot versions must be checked against a remote repository!')
     }
 
-    localArtifactPath = getLocalArtifactPath(artifact, options.localRepository)
+    localArtifactPath = localRepository.pathToArtifact(artifact)
 
     log(`Searcing for artifact in the local repository at\n  ${localArtifactPath}`)
 
-    if (await canReadLocalArtifact(localArtifactPath)) {
+    if (await localRepository.artifactExistsInRepository(artifact)) {
       log(`Artifact found in the local repository at\n  ${localArtifactPath}`)
 
       return {
@@ -150,6 +119,5 @@ async function obtainArtifact (options) {
 
 module.exports = {
   obtainArtifact,
-  probablyAnArtifactName: artifact.isArtifactName,
-  getLocalRepositoryPath
+  probablyAnArtifactName: artifact.isArtifactName
 }

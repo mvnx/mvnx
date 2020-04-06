@@ -7,8 +7,10 @@ const LocalRepository = {
     fs, os
   },
 
-  LocalRepository (path) {
-    this._path = path || path.join(this._deps.os.homedir(), '.m2')
+  LocalRepository (forcePath) {
+    this._path = forcePath || path.join(this._deps.os.homedir(), '.m2')
+
+    return this
   },
 
   pathToArtifact (artifact) {
@@ -31,7 +33,7 @@ const LocalRepository = {
       await fs.promises.access(artifactPath, fs.constants.R_OK)
 
       return true
-    } catch (e) {
+    } catch {
       // Do not use exceptions for control flow, lol.
       return false
     }
