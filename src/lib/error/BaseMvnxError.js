@@ -38,7 +38,7 @@ class BaseMvnxError extends Error {
   }
 
   get link () {
-    return `https://github.com/mvnx/mvnx/FIXME/${this.code}`
+    return `https://github.com/mvnx/mvnx/blob/master/docs/errors.md#${this.code}`
   }
 
   get details () {
