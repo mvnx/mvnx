@@ -4,7 +4,6 @@ const path = require('path')
 const mkdirp = require('mkdirp')
 
 const log = require('./log')
-const get = require('./get')
 
 const Artifact = require('./artifact/artifact')
 const Configuration = require('./configuration')
@@ -90,8 +89,7 @@ async function obtainArtifact (options) {
 
     let foundInRemoteRepository = null
     try {
-      const getOptions = get.basicAuthOptions(remoteRepository.username, remoteRepository.password)
-      foundInRemoteRepository = await get.intoFile(remoteArtifactUrl, downloadedArtifactPath, getOptions)
+      foundInRemoteRepository = await remoteRepository.downloadArtifact(artifact, downloadedArtifactPath)
     } finally {
       if (firstCreatedDirectoryForDownload && !foundInRemoteRepository) {
         await rmdirp(firstCreatedDirectoryForDownload, path.dirname(localArtifactPath))

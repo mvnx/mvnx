@@ -73,6 +73,14 @@ const RemoteRepository = {
     }
   },
 
+  downloadArtifact (artifact, destination) {
+    const getOptions = this._deps.get.basicAuthOptions(this.username, this.password)
+
+    const artifactUrl = this.pathToArtifact(artifact)
+
+    return this._deps.get.intoFile(artifactUrl, destination, getOptions)
+  },
+
   forgetCredentials () {
     delete this._username
     delete this._password
