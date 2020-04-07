@@ -1,17 +1,11 @@
-const fs = require('fs')
-
 const yargs = require('yargs')
 
-const java = require('./lib/java')
-const log = require('./lib/log')
-const maven = require('./lib/maven')
+const lib = require('../lib')
 
-const Configuration = require('./lib/configuration/Configuration')
-
-const UnrecognizableArtifactError = require('./lib/error/UnrecognizableArtifactError')
+const UnrecognizableArtifactError = require('../lib/error/UnrecognizableArtifactError')
 
 function splitArgv (originalArgv) {
-  const artifactArgIndex = originalArgv.findIndex(maven.isArtifactName)
+  const artifactArgIndex = originalArgv.findIndex(lib.maven.isArtifactName)
 
   if (artifactArgIndex === -1) {
     throw new UnrecognizableArtifactError()
@@ -43,12 +37,12 @@ function justDisplayHelpOrVersion (originalArgv) {
 }
 
 function retreiveVersion () {
-  const packageJson = require('../package')
+  const packageJson = require('../../package')
 
   return packageJson.version
 }
 
-function cli (originalArgv) {
+function parse (originalArgv) {
   let split = null
   if (!justDisplayHelpOrVersion(originalArgv)) {
     split = splitArgv(originalArgv)
@@ -79,13 +73,13 @@ function cli (originalArgv) {
         alias: 'l',
         describe: 'Path to a local repository. Will attempt to use the default local repository ~/.m2 if missing',
         type: 'string',
-        default: maven.defaultLocalRepositoryPath()
+        default: lib.repository.defaultLocalRepositoryPath
       },
       'remote-repository': {
         alias: 'r',
         describe: 'URL of a remote repository. Will use Maven Central by default.',
         type: 'string',
-        default: maven.DEFAULT_REMOTE_REPOSITORY_URL
+        default: lib.repository.defaultRemoteRepositoryUrl
       },
       quiet: {
         alias: 'q',
@@ -106,61 +100,6 @@ function cli (originalArgv) {
   return yargsArgv
 }
 
-function makeObtainOptions (argv, config) {
-  const options = {
-    artifactName: argv.artifact
-  }
-
-  if (!argv.ignoreLocal) {
-    options.useLocalRepository = true
-    options.localRepository = {
-      path: argv.localRepository
-    }
-  }
-
-  if (!argv.onlyLocal) {
-    options.useRemoteRepository = true
-    options.remoteRepository = config.getRemoteRepositoryConfiguration(argv.remoteRepository)
-  }
-
-  return options
-}
-
-function makeExecuteOptions (artifactPath, argv) {
-  return {
-    jar: artifactPath,
-    arguments: argv.arguments,
-    javaExecutable: argv.javaExecutable
-  }
-}
-
-async function run (originalArgv) {
-  const parsedArgv = cli(originalArgv)
-
-  log.configure({ quiet: parsedArgv.quiet })
-
-  const config = await Configuration.read(parsedArgv.localRepository)
-
-  const obtainOptions = makeObtainOptions(parsedArgv, config)
-
-  let obtainedArtifact
-  try {
-    obtainedArtifact = await maven.obtainArtifact(obtainOptions)
-
-    if (!obtainedArtifact) {
-      process.exit(1)
-    }
-
-    const executeOptions = makeExecuteOptions(obtainedArtifact.path, parsedArgv)
-
-    await java.executeJar(executeOptions)
-  } finally {
-    if (obtainedArtifact && obtainedArtifact.temporary) {
-      await fs.promises.unlink(obtainedArtifact.path)
-    }
-  }
-}
-
 module.exports = {
-  run
+  parse
 }

@@ -146,8 +146,6 @@ async function obtainArtifact (options) {
 }
 
 module.exports = {
-  obtainArtifact,
   isArtifactName: Artifact.isArtifactName,
-  defaultLocalRepositoryPath: LocalRepository.defaultPath.bind(LocalRepository),
-  DEFAULT_REMOTE_REPOSITORY_URL: RemoteRepository.DEFAULT_REMOTE_REPOSITORY_URL
+  obtainArtifact
 }
