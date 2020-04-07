@@ -6,6 +6,8 @@ const java = require('./lib/java')
 const log = require('./lib/log')
 const maven = require('./lib/maven')
 
+const Configuration = require('./lib/configuration/Configuration')
+
 const UnrecognizableArtifactError = require('./lib/error/UnrecognizableArtifactError')
 
 function splitArgv (originalArgv) {
@@ -103,19 +105,21 @@ function cli (originalArgv) {
   return yargsArgv
 }
 
-function makeObtainOptionsFromArgv (argv) {
+async function makeObtainOptions (argv, config) {
   const options = {
     artifactName: argv.artifact
   }
 
   if (!argv.ignoreLocal) {
     options.useLocalRepository = true
-    options.localRepository = argv.localRepository
+    options.localRepository = {
+      path: argv.localRepository
+    }
   }
 
   if (!argv.onlyLocal) {
     options.useRemoteRepository = true
-    options.remoteRepository = argv.remoteRepository
+    options.remoteRepository = config.getRemoteRepositoryConfiguration(argv.remoteRepository)
   }
 
   return options
@@ -134,7 +138,9 @@ async function run (originalArgv) {
 
   log.configure({ quiet: parsedArgv.quiet })
 
-  const obtainOptions = makeObtainOptionsFromArgv(parsedArgv)
+  const config = await Configuration.read(parsedArgv.localRepository)
+
+  const obtainOptions = makeObtainOptions(parsedArgv, config)
 
   let obtainedArtifact
   try {
