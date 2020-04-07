@@ -27,11 +27,13 @@ mvnx is a JAR file executor with a catch: it obtains the JAR from local or remot
 
   * **No Configuration Needed.** There's no need for convoluted configuration, XML files, DSLs and the usual ceremony of the JVM world. You just specifiy the Maven coordinates along with the command line arguments and mvnx will take care of the rest.
   * **Local Repository Caching.**  Artifact resolution starts in your local repository for maximum speed and minimal network usage. Downloaded artifacts are also cached in the local repository.
+  * **Authentication Support.** mvnx supports HTTP Basic Authentication to remote maven repositories. This is required by repositories such as those of GitHub Packages. This feature needs a bit of a configuration though. See [Remote Repository Authentication](#remote-repository-authentication).
+  * **Remote Repository Alias.** Remote repository URLs can be given aliases. If you set an alias, then you don't have to type `-r https://maven.pkg.github.com/OWNER/REPO` but the alias, for example `-r gpr::OWNER::REPO`. See [Remote Repository Alias](#remote-repository-alias).
+  * **Latest Version Retrieval.** If you don't need a specific version of some artifact then mvnx will automatically get the latest available version. Just omit the version coordinate!
 
-However, be aware of the following limitations:
+However, be aware of the following limitation:
 
   * Fat JARs only. mvnx will not perform dependency resolution.
-  * Public repositories only. Maven repository login is currently not possible.
 
 ## Up and Running
 
@@ -47,7 +49,7 @@ If you already have [Node](https://nodejs.org/en/) (and thus [npx](https://mediu
 
   1. **Execute your favorite JAR with some x-ception.**
      ~~~~
-     npx mvnx com.github.ricksbrown:cowsay:1.1.0 "Hello, World!"
+     npx mvnx com.github.ricksbrown:cowsay "Hello, World!"
      ~~~~
 
 ### Using npm -g
@@ -61,7 +63,7 @@ If you don't want to type npx over and over (or just want to get rid of the star
 
   2. **Execute your favorite JAR.**
      ~~~~
-     mvnx com.github.ricksbrown:cowsay:1.1.0 "Hello, World!"
+     mvnx com.github.ricksbrown:cowsay "Hello, World!"
      ~~~~
 
 ### Using native executables
@@ -77,7 +79,7 @@ If you're not a fan of Node then you might want to try the native executables pu
 
   2. **Execute your favorite JAR.**
      ~~~~
-     mvnx com.github.ricksbrown:cowsay:1.1.0 "Hello, World!"
+     mvnx com.github.ricksbrown:cowsay "Hello, World!"
      ~~~~
 
 <div align="center">
@@ -116,12 +118,97 @@ mvnx [mvnx options] <artifact> [artifact arguments]
 
   * Usual maven coordinates in the following format:
     ~~~~
-    <groupId>:<artifactId>:<version>
+    <groupId>:<artifactId>[:version]
     ~~~~
+  * If `version` is omitted, then mvnx will attempt to retrieve the latest version from the remote repository. Note, that this feature does not work if the `--only-local` flag is set.
 
 ### artifact arguments
 
   * The arguments you want to pass to the executed JAR.
+
+### Remote Repository Alias
+
+Makes sure to create an mvnx configuration file in your local maven directory. Note, that mvnx will search for the configuration file at `[local-repository]/mvnx.json` where `local-repository` is the value of the `--local-repository` option (`~/.m2` by default).
+
+Thus, in the default case, simply create the file `~/.m2/mvnx.json`. Then, create the alias in the file:
+
+~~~~JSON
+{
+  "servers": [
+    {
+      "id": "The alias you want to use.",
+      "url": "The URL of the remote repository."
+    }
+  ]
+}
+~~~~
+
+Now you're free to use the value of the `id` field instead of the URL.
+
+### Remote Repository Authentication
+
+For remote authentication using HTTP Basic, you have three options:
+
+#### Using Environment Variables
+
+Simply set the following two environment variables:
+
+  * `MVNX_REMOTE_USERNAME`,
+  * `MVNX_REMOTE_PASSWORD`
+
+Ideal for CI workflows.
+
+#### Using mvnx.json
+
+You can also set the credentials in the mvnx configuration file (usually located at `~/.m2/mvnx.json`, see [Remote Repository Alias](#remote-repository-alias) for more details) as follows:
+
+~~~~JSON
+{
+  "servers": [
+    {
+      "url": "The URL of the remote repository.",
+      "username": "Username for the repository.",
+      "password": "Password for the repository."
+    }
+  ]
+}
+~~~~
+
+You may also set an `id` if you want to use an alias. Going forward, mvnx will always use the specified credentials if the appropriate remote repository is queried.
+
+This approach works best if
+
+  * you don't have maven installed,
+  * or maven is available but you don't want to tinker with the maven `settings.xml`.
+
+#### Using settings.xml and mvnx.json
+
+Let's assume, that you already have the following server in your `settings.xml`:
+
+~~~~XML
+<server>
+  <id>some-server</id>
+  <username>user</username>
+  <password>pw</password>
+</server>
+~~~~
+
+In this case, to re-use these credentials, instead of copy-pasting them, you can create the following mvnx configuration entry:
+
+~~~~JSON
+{
+  "servers": [
+    {
+      "id": "some-server",
+      "url": "The URL of the remote repository."
+    }
+  ]
+}
+~~~~
+
+By using the same id in both the `settings.xml` and the `mvnx.json`, mvnx will be able to load the appropriate credentials.
+
+This approach is great if you don't want to set credentials twice.
 
 ## Contributing
 
