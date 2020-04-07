@@ -17,11 +17,11 @@ const StoredMvnxConfiguration = {
   },
 
   getServerById (id) {
-    return this.data.servers.find(s => s.id === id)
+    return (this._data.servers || []).find(s => s.id === id)
   },
 
   getServerByUrl (url) {
-    return this.data.servers.find(s => s.url === url)
+    return (this._data.servers || []).find(s => s.url === url)
   }
 }
 

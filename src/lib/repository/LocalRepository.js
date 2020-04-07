@@ -3,12 +3,16 @@ const os = require('os')
 const path = require('path')
 
 const LocalRepository = {
+  defaultPath () {
+    return path.join(this._deps.os.homedir(), '.m2')
+  },
+
   _deps: {
     fs, os
   },
 
   LocalRepository (forcePath) {
-    this._path = forcePath || path.join(this._deps.os.homedir(), '.m2')
+    this._path = forcePath || this.defaultPath()
 
     return this
   },

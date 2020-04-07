@@ -78,7 +78,8 @@ function cli (originalArgv) {
       'local-repository': {
         alias: 'l',
         describe: 'Path to a local repository. Will attempt to use the default local repository ~/.m2 if missing',
-        type: 'string'
+        type: 'string',
+        default: maven.defaultLocalRepositoryPath()
       },
       'remote-repository': {
         alias: 'r',
@@ -105,7 +106,7 @@ function cli (originalArgv) {
   return yargsArgv
 }
 
-async function makeObtainOptions (argv, config) {
+function makeObtainOptions (argv, config) {
   const options = {
     artifactName: argv.artifact
   }
