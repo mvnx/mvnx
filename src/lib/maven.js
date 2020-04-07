@@ -1,9 +1,7 @@
-const fs = require('fs')
 const path = require('path')
 
-const mkdirp = require('mkdirp')
-
 const log = require('./log')
+const fsUtil = require('./util/fs')
 
 const Artifact = require('./artifact/artifact')
 const Configuration = require('./configuration')
@@ -12,18 +10,6 @@ const RemoteRepository = require('./repository/remote-repository')
 
 const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
 const CannotCheckVersionInOnlyLocalError = require('./error/CannotCheckVersionInOnlyLocalError')
-
-async function rmdirp (from, to) {
-  const fromSegments = from.split(path.sep)
-  const toSegments = to.split(path.sep)
-    .slice(fromSegments.length)
-
-  for (let i = toSegments.length; i >= 0; --i) {
-    const deletePath = path.join(...fromSegments, ...toSegments.slice(0, i))
-
-    await fs.promises.rmdir(deletePath)
-  }
-}
 
 async function obtainArtifact (options) {
   let artifact = Artifact.fromName(options.artifactName)
@@ -74,7 +60,7 @@ async function obtainArtifact (options) {
     let temporary
     let firstCreatedDirectoryForDownload = null
     if (localArtifactPath) {
-      firstCreatedDirectoryForDownload = await mkdirp(path.dirname(localArtifactPath))
+      firstCreatedDirectoryForDownload = await fsUtil.mkdirp(path.dirname(localArtifactPath))
 
       downloadedArtifactPath = localArtifactPath
 
@@ -92,7 +78,7 @@ async function obtainArtifact (options) {
       foundInRemoteRepository = await remoteRepository.downloadArtifact(artifact, downloadedArtifactPath)
     } finally {
       if (firstCreatedDirectoryForDownload && !foundInRemoteRepository) {
-        await rmdirp(firstCreatedDirectoryForDownload, path.dirname(localArtifactPath))
+        await fsUtil.rmdirp(firstCreatedDirectoryForDownload, path.dirname(localArtifactPath))
       }
     }
 
