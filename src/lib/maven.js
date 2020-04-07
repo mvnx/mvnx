@@ -5,8 +5,8 @@ const fsUtil = require('./util/fs')
 
 const Artifact = require('./artifact/artifact')
 const Configuration = require('./configuration')
-const LocalRepository = require('./repository/local-repository')
-const RemoteRepository = require('./repository/remote-repository')
+const LocalRepository = require('./repository/LocalRepository')
+const RemoteRepository = require('./repository/RemoteRepository')
 
 const ArtifactNotFoundError = require('./error/ArtifactNotFoundError')
 const CannotCheckVersionInOnlyLocalError = require('./error/CannotCheckVersionInOnlyLocalError')
