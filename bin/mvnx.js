@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const mvnx = require('../dist/index');
+const mvnx = require('../dist');
 
 (async function main () {
   try {
