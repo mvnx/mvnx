@@ -17,6 +17,9 @@
   <a href="https://www.npmjs.com/package/mvnx">
     <img src="https://img.shields.io/npm/v/mvnx" alt="Current npm package version.">
   </a>
+  <a href="https://www.npmjs.com/package/mvnx">
+    <img src="https://img.shields.io/badge/npx-mvnx-brightgreen" alt="Run with npx.">
+  </a>
   <a href="https://github.com/mvnx/mvnx/actions?query=workflow%3A%22Build+Master%22">
     <img src="https://github.com/mvnx/mvnx/workflows/Build%20Master/badge.svg" alt="Master build status.">
   </a>
