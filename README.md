@@ -26,6 +26,27 @@
   <img src="docs/img/cowsay.png" alt="Running cowsay with mvnx.">
 </div>
 
+**Table of Contents**
+
+  * [Feautres](#features)
+  * [Up and Running](#up-and-running)
+    * [Using npx](#using-npx)
+    * [Using npm -g](#using-npm--g)
+    * [Using native executables](#using-native-executables)
+  * [CLI Usage](#cli-usage)
+    * [mxnx options](#mvnx-options)
+    * [artifact](#artifact)
+    * [artifact arguments](#artifact-arguments)
+  * [Remote Repository Alias](#remote-repository-alias)
+  * [Remote Repository Authentication](#remote-repository-authentication)
+      * [Using Environment Variables](#using-environment-variables)
+      * [Using mvnx.json](#using-mvnx.json)
+      * [Using settings.xml and mvnx.json](#using-settings.xml-and-mvnx.json)
+  * [Contributing](#contributing)
+  * [License](#license)
+
+## Features
+
 mvnx is a JAR file executor with a catch: it obtains the JAR from local or remote Maven repositories.
 
   * **No Configuration Needed.** There's no need for convoluted configuration, XML files, DSLs and the usual ceremony of the JVM world. You just specifiy the Maven coordinates along with the command line arguments and mvnx will take care of the rest.
@@ -85,7 +106,7 @@ If you're not a fan of Node then you might want to try the native executables pu
      mvnx com.github.ricksbrown:cowsay "Hello, World!"
      ~~~~
 
-## Usage
+## CLI Usage
 
 ~~~~
 mvnx [mvnx options] <artifact> [artifact arguments]
@@ -125,7 +146,7 @@ mvnx [mvnx options] <artifact> [artifact arguments]
 
   * The arguments you want to pass to the executed JAR.
 
-### Remote Repository Alias
+## Remote Repository Alias
 
 Makes sure to create an mvnx configuration file in your local maven directory. Note, that mvnx will search for the configuration file at `[local-repository]/mvnx.json` where `local-repository` is the value of the `--local-repository` option (`~/.m2` by default).
 
@@ -144,11 +165,15 @@ Thus, in the default case, simply create the file `~/.m2/mvnx.json`. Then, creat
 
 Now you're free to use the value of the `id` field instead of the URL.
 
-### Remote Repository Authentication
+## Remote Repository Authentication
 
 For remote authentication using HTTP Basic, you have three options:
 
-#### Using Environment Variables
+  * [Using Environment Variables](#using-environment-variables)
+  * [Using mvnx.json](#using-mvnx.json)
+  * [Using settings.xml and mvnx.json](#using-settings.xml-and-mvnx.json)
+
+### Using Environment Variables
 
 Simply set the following two environment variables:
 
@@ -157,7 +182,7 @@ Simply set the following two environment variables:
 
 Ideal for CI workflows.
 
-#### Using mvnx.json
+### Using mvnx.json
 
 You can also set the credentials in the mvnx configuration file (usually located at `~/.m2/mvnx.json`, see [Remote Repository Alias](#remote-repository-alias) for more details) as follows:
 
@@ -180,7 +205,7 @@ This approach works best if
   * you don't have maven installed,
   * or maven is available but you don't want to tinker with the maven `settings.xml`.
 
-#### Using settings.xml and mvnx.json
+### Using settings.xml and mvnx.json
 
 Let's assume, that you already have the following server in your `settings.xml`:
 
