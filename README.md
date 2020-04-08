@@ -22,6 +22,9 @@
   </a>
 </p>
 
+<div align="center">
+  <img src="docs/img/cowsay.png" alt="Running cowsay with mvnx.">
+</div>
 
 mvnx is a JAR file executor with a catch: it obtains the JAR from local or remote Maven repositories.
 
@@ -81,10 +84,6 @@ If you're not a fan of Node then you might want to try the native executables pu
      ~~~~
      mvnx com.github.ricksbrown:cowsay "Hello, World!"
      ~~~~
-
-<div align="center">
-  <img src="docs/img/cowsay.png" alt="Running cowsay with mvnx.">
-</div>
 
 ## Usage
 
