@@ -18,7 +18,10 @@ function makeObtainOptions (args, config) {
 
   if (!args.onlyLocal) {
     options.useRemoteRepository = true
-    options.remoteRepository = config.getRemoteRepositoryConfiguration(args.remoteRepository)
+
+    const { repository } = lib.maven.parseArtifact(args.artifact)
+
+    options.remoteRepository = config.getRemoteRepositoryConfiguration(repository || lib.repository.defaultRemoteRepositoryUrl)
   }
 
   return options
