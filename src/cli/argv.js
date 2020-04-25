@@ -42,6 +42,10 @@ function retreiveVersion () {
   return packageJson.version
 }
 
+function calculateHelpWidth () {
+  return Math.max(80, 0.7 * yargs.terminalWidth())
+}
+
 function parse (originalArgv) {
   let split = null
   if (!justDisplayHelpOrVersion(originalArgv)) {
@@ -88,6 +92,7 @@ function parse (originalArgv) {
     .version(retreiveVersion())
     .alias('version', 'v')
     .strict(true)
+    .wrap(calculateHelpWidth())
     .argv
 
   yargsArgv.arguments = split.artifactArgv
