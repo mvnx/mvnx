@@ -33,23 +33,11 @@
 
   * [Feautres](#features)
   * [Up and Running](#up-and-running)
-    * [Using npx](#using-npx)
-    * [Using npm -g](#using-npm--g)
-    * [Using native executables](#using-native-executables)
   * [CLI Usage](#cli-usage)
-    * [Examples](#examples)
-    * [mxnx options](#mvnx-options)
-    * [artifact](#artifact)
-    * [artifact arguments](#artifact-arguments)
   * [Configuration File](#configuration-file)
-  * [mvnx :heart: GitHub Packages](#mvnx-:heart:-github-packages)
+  * [mvnx :heart: GitHub Packages](#mvnx-heart-github-packages)
   * [Remote Repository Alias](#remote-repository-alias)
-      * [Creating an Alias](#creating-an-alias)
-      * [Creating a Prefix](#creating-a-prefix)
   * [Remote Repository Authentication](#remote-repository-authentication)
-      * [Using Environment Variables](#using-environment-variables)
-      * [Using mvnx.json](#using-mvnx.json)
-      * [Using settings.xml and mvnx.json](#using-settings.xml-and-mvnx.json)
   * [Contributing](#contributing)
   * [License](#license)
 
@@ -68,7 +56,7 @@ mvnx is a JAR file executor with a catch: it obtains the JAR from local or remot
     ~~~~
     mvnx http://maven.pkg.github.com/OWNER/REPO/artifactId:groupId:version
     ~~~~
-    Magic! :unicorn: See [mvnx :heart: GitHub Packages](#mvnx-:heart:-github-packages) and [Remote Repository Alias](#remote-repository-alias)
+    Magic! :unicorn: See [mvnx :heart: GitHub Packages](#mvnx-heart-github-packages) and [Remote Repository Alias](#remote-repository-alias)
   * **Latest Version Retrieval.** If you don't need a specific version of some artifact then mvnx will automatically get the latest available version. Just omit the version coordinate!
 
 However, be aware of the following limitation:
