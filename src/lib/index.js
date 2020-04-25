@@ -14,7 +14,8 @@ module.exports = {
   },
   maven: {
     isArtifactName: maven.isArtifactName,
-    obtainArtifact: maven.obtainArtifact
+    obtainArtifact: maven.obtainArtifact,
+    parseArtifact: maven.parseArtifact
   },
   repository: {
     get defaultLocalRepositoryPath () {

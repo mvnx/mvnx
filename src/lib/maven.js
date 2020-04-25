@@ -147,5 +147,6 @@ async function obtainArtifact (options) {
 
 module.exports = {
   isArtifactName: Artifact.isArtifactName,
-  obtainArtifact
+  obtainArtifact,
+  parseArtifact: Artifact.fromName
 }
