@@ -49,7 +49,7 @@ function parse (originalArgv) {
   }
 
   const yargsArgv = yargs(split ? split.cliArgv.slice(2) : originalArgv.slice(2))
-    .usage('mvnx <groupid>:<artifactId>:<version>')
+    .usage('mvnx [remote repository URL or identifier/]<groupid>:<artifactId>[:version]')
     .example('mvnx com.github.ricksbrown:cowsay:1.1.0 "Hello, World!"', 'Say hello with a friendly cow!')
     .epilogue('For more information, please visit https://github.com/mvnx/mvnx')
     .options({
@@ -74,12 +74,6 @@ function parse (originalArgv) {
         describe: 'Path to a local repository. Will attempt to use the default local repository ~/.m2 if missing',
         type: 'string',
         default: lib.repository.defaultLocalRepositoryPath
-      },
-      'remote-repository': {
-        alias: 'r',
-        describe: 'URL of a remote repository. Will use Maven Central by default.',
-        type: 'string',
-        default: lib.repository.defaultRemoteRepositoryUrl
       },
       quiet: {
         alias: 'q',
