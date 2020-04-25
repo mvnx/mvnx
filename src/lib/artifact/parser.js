@@ -53,15 +53,26 @@ function isArtifactName (name = '') {
   return segments.every(segment => segment.match(ARTIFACT_SEGMENT_REGEX) !== null)
 }
 
+function splitAtRepository (name) {
+  const separatorIndex = name.lastIndexOf(URL_SEPARATOR)
+
+  return (separatorIndex === -1)
+    ? { artifactPart: name }
+    : { repositoryPart: name.substring(0, separatorIndex), artifactPart: name.substring(separatorIndex + 1) }
+}
+
 function parseArtifactName (name) {
   if (!isArtifactName(name)) {
     throw new Error(`${name} is not a valid maven artifact name!`)
   }
 
-  const segments = name.split(ARTIFACT_SEGMENT_SEPARATOR)
+  const { artifactPart, repositoryPart } = splitAtRepository(name)
+
+  const segments = artifactPart.split(ARTIFACT_SEGMENT_SEPARATOR)
   const segmentCount = segments.length
 
   const artifact = {
+    repository: repositoryPart,
     groupId: segments[0],
     groupIdSegments: segments[0].split(GROUP_ID_SEGMENT_SEPARATOR),
     artifactId: segments[1],
