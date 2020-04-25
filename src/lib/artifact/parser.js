@@ -13,10 +13,6 @@ const MAX_SEGMENT_COUNT = 5
 
 const SNAPSHOT_SUFFIX = '-SNAPSHOT'
 
-function nameIncludesRepository (name) {
-  return name.includes(URL_SEPARATOR)
-}
-
 function isValidUrl (repository) {
   try {
     // Will throw TypeError if repository is not a valid URL.
@@ -35,30 +31,32 @@ function isValidRepositoryIdentifier (repository) {
   return segments.every(segment => segment.match(REPOSITORY_IDENTIFIER_SEGMENT_REGEX) !== null)
 }
 
-function isArtifactName (name = '') {
-  if (nameIncludesRepository(name)) {
-    const isValidRepositoryPart = isValidUrl(name) || isValidRepositoryIdentifier(name)
-
-    if (!isValidRepositoryPart) {
-      return false
-    }
-  }
-
-  const segments = name.split(ARTIFACT_SEGMENT_SEPARATOR)
-
-  if (segments.length < MIN_SEGMENT_COUNT || segments.length > MAX_SEGMENT_COUNT) {
-    return false
-  }
-
-  return segments.every(segment => segment.match(ARTIFACT_SEGMENT_REGEX) !== null)
-}
-
 function splitAtRepository (name) {
   const separatorIndex = name.lastIndexOf(URL_SEPARATOR)
 
   return (separatorIndex === -1)
     ? { artifactPart: name }
     : { repositoryPart: name.substring(0, separatorIndex), artifactPart: name.substring(separatorIndex + 1) }
+}
+
+function isArtifactName (name) {
+  const { artifactPart, repositoryPart } = splitAtRepository(name)
+
+  if (repositoryPart) {
+    const isValidRepositoryPart = isValidUrl(repositoryPart) || isValidRepositoryIdentifier(repositoryPart)
+
+    if (!isValidRepositoryPart) {
+      return false
+    }
+  }
+
+  const segments = artifactPart.split(ARTIFACT_SEGMENT_SEPARATOR)
+
+  if (segments.length < MIN_SEGMENT_COUNT || segments.length > MAX_SEGMENT_COUNT) {
+    return false
+  }
+
+  return segments.every(segment => segment.match(ARTIFACT_SEGMENT_REGEX) !== null)
 }
 
 function parseArtifactName (name) {
