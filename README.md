@@ -31,7 +31,7 @@
 
 **Table of Contents**
 
-  * [Feautres](#features)
+  * [Features](#features)
   * [Up and Running](#up-and-running)
   * [CLI Usage](#cli-usage)
   * [Configuration File](#configuration-file)
@@ -193,7 +193,7 @@ An empty configuration file should look like this:
 
 If you want to easily make use of GitHub Packages, add the following entry to the [configuration file](#configuration-file) (by default located at `~/.m2/mvnx.json`):
 
-~~~~JSON
+~~~~JSON5
 {
   "servers": [
     {
@@ -224,7 +224,7 @@ Aliases can be set in the mvnx configuration file.
 
 An alias can be created by adding a new entry to the [configuration file](#configuration-file):
 
-~~~~JSON
+~~~~JSON5
 {
   "servers": [
     {
@@ -259,7 +259,7 @@ mvnx prefix/team-b/artifact:groupId
 
 to use the remote repositories `http://private.repository/teams/team-a/maven2` and `http://private.repository/teams/team-b/maven2`. Then, you can create a new prefix as follows:
 
-~~~~JSON
+~~~~JSON5
 {
   "servers": [
     {
@@ -331,7 +331,7 @@ Let's assume, that you already have the following server in your `settings.xml`:
 
 In this case, to re-use these credentials, instead of copy-pasting them, you can create the following mvnx configuration entry:
 
-~~~~JSON
+~~~~JSON5
 {
   "servers": [
     {
