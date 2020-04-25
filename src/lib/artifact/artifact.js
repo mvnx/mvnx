@@ -10,6 +10,10 @@ const Artifact = {
     return this
   },
 
+  get repository () {
+    return this._repository
+  },
+
   get groupId () {
     return this._groupId
   },

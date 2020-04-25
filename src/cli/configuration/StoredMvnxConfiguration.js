@@ -5,6 +5,8 @@ const EMPTY_CONFIGURATION = {
   servers: []
 }
 
+const PREFIX_SEPARATOR = '/'
+
 const StoredMvnxConfiguration = {
   _deps: {
     fs
@@ -16,12 +18,46 @@ const StoredMvnxConfiguration = {
     return this
   },
 
+  getServerByPrefix (repositoryPart) {
+    const splitRepositoryPath = this._splitAtPrefix(repositoryPart)
+
+    if (!splitRepositoryPath) {
+      return null
+    }
+
+    const server = (this._data.servers || [])
+      .filter(s => s.isPrefix)
+      .find(s => s.id === splitRepositoryPath.prefix)
+
+    if (!server) {
+      return null
+    }
+
+    return {
+      username: server.username,
+      password: server.password,
+      url: server.url.replace('$$', splitRepositoryPath.substitute)
+    }
+  },
+
   getServerById (id) {
-    return (this._data.servers || []).find(s => s.id === id)
+    return (this._data.servers || [])
+      .filter(s => !s.isPrefix)
+      .find(s => s.id === id)
   },
 
   getServerByUrl (url) {
-    return (this._data.servers || []).find(s => s.url === url)
+    return (this._data.servers || [])
+      .filter(s => !s.isPrefix)
+      .find(s => s.url === url)
+  },
+
+  _splitAtPrefix (str) {
+    const prefixSeparatorIndex = str.indexOf(PREFIX_SEPARATOR)
+
+    return (prefixSeparatorIndex === -1)
+      ? null
+      : { prefix: str.substring(0, prefixSeparatorIndex), substitute: str.substring(prefixSeparatorIndex + 1) }
   }
 }
 

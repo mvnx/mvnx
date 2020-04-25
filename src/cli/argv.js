@@ -50,7 +50,9 @@ function parse (originalArgv) {
 
   const yargsArgv = yargs(split ? split.cliArgv.slice(2) : originalArgv.slice(2))
     .usage('mvnx [remote repository URL or identifier/]<groupid>:<artifactId>[:version]')
-    .example('mvnx com.github.ricksbrown:cowsay:1.1.0 "Hello, World!"', 'Say hello with a friendly cow!')
+    .example('mvnx com.github.ricksbrown:cowsay:1.1.0 "Hi!"', 'Say hello with a friendly cow!')
+    .example('mvnx com.github.ricksbrown:cowsay "Hi!"', 'Say hello with the latest version of the friendly cow!')
+    .example('mvnx https://repo1.maven.org/maven2/com.github.ricksbrown:cowsay "Hi!"', 'Explicitly specifiy which remote repository stores the friendly cow!')
     .epilogue('For more information, please visit https://github.com/mvnx/mvnx')
     .options({
       'ignore-local': {
@@ -71,7 +73,7 @@ function parse (originalArgv) {
       },
       'local-repository': {
         alias: 'l',
-        describe: 'Path to a local repository. Will attempt to use the default local repository ~/.m2 if missing',
+        describe: 'Path to a local repository. Will attempt to use the default local repository if missing.',
         type: 'string',
         default: lib.repository.defaultLocalRepositoryPath
       },

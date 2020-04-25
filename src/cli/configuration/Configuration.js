@@ -2,24 +2,6 @@ const EnvironmentConfiguration = require('./EnvironmentConfiguration')
 const StoredMavenSettings = require('./StoredMavenSettings')
 const StoredMvnxConfiguration = require('./StoredMvnxConfiguration')
 
-function filterUndefined (obj) {
-  const ret = {}
-
-  Object.keys(obj)
-    .filter((key) => obj[key] !== undefined)
-    .forEach((key) => { ret[key] = obj[key] })
-
-  return ret
-}
-
-function merge (...objs) {
-  const normalized = objs
-    .map(obj => obj || {})
-    .map(filterUndefined)
-
-  return Object.assign({}, ...normalized)
-}
-
 const Configuration = {
   _deps: {
     EnvironmentConfiguration,
@@ -40,25 +22,47 @@ const Configuration = {
       username: this._env.remoteUsername,
       password: this._env.remotePassword
     }
+
     const mavenServer = this._maven.getServerById(repository)
-    const mvnxServerById = this._mvnx.getServerById(repository)
+    if (mavenServer) {
+      return {
+        username: envCredentials.username,
+        password: envCredentials.password,
+        url: mavenServer.url
+      }
+    }
+
     const mvnxServerByUrl = this._mvnx.getServerByUrl(repository)
+    if (mvnxServerByUrl) {
+      return {
+        username: envCredentials.username || mvnxServerByUrl.username,
+        password: envCredentials.password || mvnxServerByUrl.password,
+        url: mvnxServerByUrl.url
+      }
+    }
 
-    const credentials = merge(
-      mvnxServerByUrl,
-      mvnxServerById,
-      mavenServer,
-      envCredentials
-    )
+    const mvnxServerById = this._mvnx.getServerById(repository)
+    if (mvnxServerById) {
+      return {
+        username: envCredentials.username || mvnxServerById.username,
+        password: envCredentials.password || mvnxServerById.password,
+        url: mvnxServerById.url
+      }
+    }
 
-    const url = mvnxServerById
-      ? mvnxServerById.url
-      : repository
+    const mvnxServerByPrefix = this._mvnx.getServerByPrefix(repository)
+    if (mvnxServerByPrefix) {
+      return {
+        username: envCredentials.username || mvnxServerByPrefix.username,
+        password: envCredentials.password || mvnxServerByPrefix.password,
+        url: mvnxServerByPrefix.url
+      }
+    }
 
     return {
-      username: credentials.username,
-      password: credentials.password,
-      url
+      username: envCredentials.username,
+      password: envCredentials.password,
+      url: repository
     }
   }
 }
