@@ -2,7 +2,7 @@ let quiet = false
 
 function log (message) {
   if (!quiet) {
-    console.log(message)
+    console.error(message)
   }
 }
 
