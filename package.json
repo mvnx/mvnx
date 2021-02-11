@@ -1,6 +1,6 @@
 {
   "name": "mvnx",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Execute JARs from maven repositories with no strings attached.",
   "main": "dist/index.js",
   "keywords": [
