@@ -69,11 +69,11 @@ async function tryObtainRemotely (options, destination, artifact) {
   const remoteArtifactUrl = remoteRepository.pathToArtifact(artifact)
 
   log(`Attempting to retrieve artifact from remote repository at\n  ${remoteArtifactUrl}`)
-  
+
   let downloadedArtifactPath
   let temporary
   let firstCreatedDirectoryForDownload = null
-  if (destination) {    
+  if (destination) {
     firstCreatedDirectoryForDownload = await fsUtil.mkdirp(path.dirname(destination))
 
     downloadedArtifactPath = destination
@@ -82,7 +82,6 @@ async function tryObtainRemotely (options, destination, artifact) {
 
     temporary = false
   } else {
-    
     downloadedArtifactPath = artifact.filename
 
     temporary = true
