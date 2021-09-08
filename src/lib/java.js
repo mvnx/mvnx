@@ -11,7 +11,7 @@ function executeJar (options) {
 
   const bareJavaExecutable = command.split(' ').shift()
   try {
-    execSync(`${bareJavaExecutable} --version`, {
+    execSync(`${bareJavaExecutable} -version`, {
       stdio: 'ignore'
     })
   } catch (err) {
