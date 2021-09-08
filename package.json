@@ -39,18 +39,16 @@
     "ignore": "dist/*"
   },
   "devDependencies": {
-    "@zeit/ncc": "0.22.0",
-    "chalk": "4.0.0",
-    "fast-xml-parser": "3.16.0",
-    "follow-redirects": "^1.11.0",
+    "@vercel/ncc": "0.30.0",
+    "chalk": "4.1.2",
+    "fast-xml-parser": "3.19.0",
+    "follow-redirects": "1.14.3",
     "husky": "4.2.3",
-    "mkdirp": "1.0.3",
-    "mvn-artifact-url": "4.1.0",
-    "pkg": "4.4.5",
-    "standard": "14.3.3",
+    "mkdirp": "1.0.4",
+    "pkg": "5.3.1",
+    "standard": "16.0.3",
     "yargs": "15.3.1"
   },
-  "dependencies": {},
   "files": [
     "bin"
   ]
