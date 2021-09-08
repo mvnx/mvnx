@@ -34,7 +34,7 @@ async function intoString (url, options = {}) {
   })
 }
 
-async function intoFile (url, destination, options = {}) {
+function intoFile (url, destination, options = {}) {
   return new Promise(function downloadPromise (resolve, reject) {
     const request = https.get(url, options, function responseHandler (response) {
       if (response.statusCode !== 200) {
@@ -48,7 +48,7 @@ async function intoFile (url, destination, options = {}) {
       response.pipe(output)
 
       output.on('finish', function downloadFinished () {
-        output.end(() => resolve(true))
+        resolve(true)
       })
 
       output.on('error', function downloadError (err) {
