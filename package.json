@@ -42,7 +42,7 @@
     "@vercel/ncc": "0.30.0",
     "chalk": "4.1.2",
     "fast-xml-parser": "3.19.0",
-    "follow-redirects": "1.14.3",
+    "follow-redirects": "1.14.8",
     "husky": "4.2.3",
     "mkdirp": "1.0.4",
     "pkg": "5.3.1",
